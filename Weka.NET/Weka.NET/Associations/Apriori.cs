@@ -6,6 +6,10 @@ using Weka.NET.Core;
 
 namespace Weka.NET.Associations
 {
+    /// <summary>
+    /// Fill description...
+    /// <remarks="This is the C# port for ItemSet.java originally developed by Eibe Frank"/>
+    /// </summary>
     public class ItemSet
     {
         public IList<int?> Items {set;get;}
@@ -15,6 +19,11 @@ namespace Weka.NET.Associations
         public int? this[int index]
         {
             get { return Items[index]; }
+        }
+
+        public static double ConfidenceForRule(ItemSet premise, ItemSet consequence)
+        {
+            return (double)consequence.Counter / (double)premise.Counter;
         }
 
         public bool ContainedBy(Instance instance)

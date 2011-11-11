@@ -13,14 +13,35 @@ namespace Weka.NET.Tests.Associations
     public class ItemSetTest
     {
         [Test]
-        public void ContainedBy()
+        public void ContainedByReturnsTrueIfInstanceContainsItemSet()
         {
             var someInstance = new Instance { Weight = 1.0, Values = new List<double?> { 1d, 2d, 3d } };
 
             var someItemSet = new ItemSet { Items = new List<int?>{ null, 2, 3 } };
 
             Assert.IsTrue( someItemSet.ContainedBy(someInstance) );
-             
+        }
+
+        [Test]
+        public void ContainedByReturnsFalseIfInstanceDoesntContainItemSet()
+        {
+            var someInstance = new Instance { Weight = 1.0, Values = new List<double?> { 1d, 2d } };
+
+            var someItemSet = new ItemSet { Items = new List<int?> { null, 5 } };
+
+            Assert.IsFalse(someItemSet.ContainedBy(someInstance));
+        }
+
+        [Test]
+        public void EnsureConfidenceForRuleDividesConsequenceCounterByPremiseCounter()
+        {
+            var consequence = new ItemSet { Counter = 10 };
+
+            var premise = new ItemSet { Counter = 3 };
+
+            double actual = ItemSet.ConfidenceForRule(premise, consequence);
+
+            Assert.AreEqual((double)consequence.Counter / (double)premise.Counter, actual, 0d);
         }
 
     }
