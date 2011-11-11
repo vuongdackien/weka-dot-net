@@ -12,13 +12,19 @@ namespace Weka.NET.Associations
     /// </summary>
     public class ItemSet
     {
-        public IList<int?> Items {set;get;}
+        public IList<int?> Items {private set; get;}
 
-        public int Counter { set; get; }
+        public int Counter { private set; get; }
 
         public int? this[int index]
         {
             get { return Items[index]; }
+        }
+
+        public ItemSet(int counter, IEnumerable<int?> items)
+        {
+            Counter = counter;
+            Items = items.ToList().AsReadOnly();
         }
 
         public static double ConfidenceForRule(ItemSet premise, ItemSet consequence)

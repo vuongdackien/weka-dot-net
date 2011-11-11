@@ -15,9 +15,9 @@ namespace Weka.NET.Tests.Associations
         [Test]
         public void ContainedByReturnsTrueIfInstanceContainsItemSet()
         {
-            var someInstance = new Instance { Weight = 1.0, Values = new List<double?> { 1d, 2d, 3d } };
+            var someInstance = new Instance(values: new List<double?> { 1d, 2d, 3d });
 
-            var someItemSet = new ItemSet { Items = new List<int?>{ null, 2, 3 } };
+            var someItemSet = new ItemSet(counter: 1,  items: new List<int?>{ null, 2, 3 } );
 
             Assert.IsTrue( someItemSet.ContainedBy(someInstance) );
         }
@@ -25,9 +25,9 @@ namespace Weka.NET.Tests.Associations
         [Test]
         public void ContainedByReturnsFalseIfInstanceDoesntContainItemSet()
         {
-            var someInstance = new Instance { Weight = 1.0, Values = new List<double?> { 1d, 2d } };
+            var someInstance = new Instance(values: new List<double?> { 1d, 2d });
 
-            var someItemSet = new ItemSet { Items = new List<int?> { null, 5 } };
+            var someItemSet = new ItemSet(counter: 1, items: new List<int?> { null, 5 });
 
             Assert.IsFalse(someItemSet.ContainedBy(someInstance));
         }
@@ -35,9 +35,9 @@ namespace Weka.NET.Tests.Associations
         [Test]
         public void EnsureConfidenceForRuleDividesConsequenceCounterByPremiseCounter()
         {
-            var consequence = new ItemSet { Counter = 10 };
+            var consequence = new ItemSet(counter: 10, items: new List<int?>{1,2});
 
-            var premise = new ItemSet { Counter = 3 };
+            var premise = new ItemSet(counter: 10, items: new List<int?> { 1, 2 });
 
             double actual = ItemSet.ConfidenceForRule(premise, consequence);
 
