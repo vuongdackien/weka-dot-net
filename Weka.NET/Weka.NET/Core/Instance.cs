@@ -4,8 +4,15 @@ namespace Weka.NET.Core
 {
     public sealed class Instance
     {
-        IList<double> Values { get; set; }
+        public IList<double?> Values { get; set; }
 
-        double Weight { get; set; }
+        public double Weight { get; set; }
+
+        public double? this[int index]
+        {
+            get { return Values[index]; }
+        }
+
+
     }
 }

@@ -44,7 +44,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Associations\AprioriTest.cs" />
-    <Compile Include="Class1.cs" />
     <Compile Include="Core\DataSetTestBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
