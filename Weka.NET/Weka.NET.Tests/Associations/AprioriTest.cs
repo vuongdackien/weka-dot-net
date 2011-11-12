@@ -12,20 +12,16 @@ namespace Weka.NET.Tests.Associations
     [TestFixture]
     public class AprioriTest
     {
-        Apriori apriori;
-
-        [SetUp]
-        public void SetupApriori()
-        {
-            apriori = new Apriori();
-        }
-
         [Test]
         public void CanBuildExtractRulesForNominalDataSet()
         {
+            var apriori = new Apriori(minSupport:10);
+
             var dataSet = TestSets.WeatherNominal();
 
-            apriori.BuildAssociationRules(dataSet);
+            var rules = apriori.BuildAssociationRules(dataSet);
+
+            //Ensure rules are generated as expected
         }
     }
 
