@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Weka.NET.Core
 {
@@ -8,6 +9,33 @@ namespace Weka.NET.Core
 
         public IList<Instance> Instances { get; private set; }
 
+        public bool CheckForStringAttributes()
+        {
+            foreach (var attribute in Attributes)
+            {
+                if (attribute.Type.IsString())
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
+        internal bool CheckForNumericAttributes()
+        {
+            foreach (var attribute in Attributes)
+            {
+                if (attribute.Type.IsNumeric())
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public DataSet(IEnumerable<Instance> instances)
+        {
+            this.Instances = new List<Instance>(instances).AsReadOnly();
+        }
     }
 }

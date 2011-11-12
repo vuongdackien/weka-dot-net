@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Weka.NET
+namespace Weka.NET.Core.Parsers
 {
-    class CommandLine
+    public interface IArffParser : IDisposable
     {
-        static void Main(string[] args)
-        {
-        }
     }
 }

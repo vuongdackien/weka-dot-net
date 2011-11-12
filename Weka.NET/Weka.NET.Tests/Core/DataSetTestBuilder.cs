@@ -13,9 +13,11 @@ namespace Weka.NET.Tests.Core
             return new DataSetTestBuilder();
         }
 
+        IList<Instance> instances = new List<Instance>();
+
         public DataSet Build()
         {
-            return new DataSet();
+            return new DataSet(instances);
         }
     }
 }
