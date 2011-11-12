@@ -13,7 +13,7 @@ namespace Weka.NET.Core
         {
             foreach (var attribute in Attributes)
             {
-                if (attribute.Type.IsString())
+                if (attribute is StringAttribute)
                 {
                     return true;
                 }
@@ -25,7 +25,7 @@ namespace Weka.NET.Core
         {
             foreach (var attribute in Attributes)
             {
-                if (attribute.Type.IsNumeric())
+                if (attribute is NumericAttribute)
                 {
                     return true;
                 }

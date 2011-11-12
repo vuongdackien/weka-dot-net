@@ -6,6 +6,28 @@ using Weka.NET.Core;
 
 namespace Weka.NET.Associations
 {
+    public class Apriori
+    {
+        public int Cycles { set; get; }
+
+        public int MinSupport { set; get; }
+
+        public void BuildAssociationRules(DataSet instances)
+        {
+
+        }
+
+        protected void FindRulesBruteForce()
+        {
+
+        }
+
+        protected void FindRulesQuickly()
+        {
+
+        }
+    }
+
     /// <summary>
     /// Fill description...
     /// <remarks="This is the C# port for ItemSet.java originally developed by Eibe Frank"/>
@@ -54,25 +76,5 @@ namespace Weka.NET.Associations
         }
     }
 
-    public class Apriori
-    {
-        public int Cycles { set; get; }
 
-        public int MinSupport { set; get; }
-
-        public void BuildAssociationRules(DataSet instances)
-        {
-
-        }
-
-        protected void FindRulesBruteForce()
-        {
-
-        }
-
-        protected void FindRulesQuickly()
-        {
-
-        }
-    }
 }

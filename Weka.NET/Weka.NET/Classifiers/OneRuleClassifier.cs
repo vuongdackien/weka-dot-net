@@ -80,7 +80,7 @@ namespace Weka.NET.Classifiers
                 return 0;
             }
 
-            if (ExtractedRule.ClassAttribute.Type.IsNominal())
+            if (ExtractedRule.ClassAttribute is NominalAttribute)
             {
                 return instance[ExtractedRule.ClassAttribute.Index].Value;
             }

@@ -10,6 +10,26 @@ using Weka.NET.Core;
 namespace Weka.NET.Tests.Associations
 {
     [TestFixture]
+    public class AprioriTest
+    {
+        Apriori apriori;
+
+        [SetUp]
+        public void SetupApriori()
+        {
+            apriori = new Apriori();
+        }
+
+        [Test]
+        public void CanBuildExtractRulesForNominalDataSet()
+        {
+            var dataSet = TestSets.WeatherNominal();
+
+            apriori.BuildAssociationRules(dataSet);
+        }
+    }
+
+    [TestFixture]
     public class ItemSetTest
     {
         [Test]
@@ -46,23 +66,5 @@ namespace Weka.NET.Tests.Associations
 
     }
 
-    [TestFixture]
-    public class AprioriTest
-    {
-        Apriori apriori;
 
-        [SetUp]
-        public void SetupApriori()
-        {
-            apriori = new Apriori();
-        }
-
-        [Test]
-        public void CanBuildAssociationRules()
-        {
-            var dataSet = DataSetTestBuilder.AnyDataSet().Build();
-
-            apriori.BuildAssociationRules(dataSet);
-        }
-    }
 }

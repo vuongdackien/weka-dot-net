@@ -50,8 +50,12 @@
     <Compile Include="Core\DataSet.cs" />
     <Compile Include="Core\DataSetBuilder.cs" />
     <Compile Include="Core\Instance.cs" />
+    <Compile Include="Core\NominalAttribute.cs" />
+    <Compile Include="Core\NumericAttribute.cs" />
     <Compile Include="Core\Parsers\IArffParser.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="CommandLine.cs" />
+    <Compile Include="Core\StringAttribute.cs" />
+    <Compile Include="Options.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
