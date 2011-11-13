@@ -44,7 +44,7 @@ namespace Weka.NET.Associations
             return singletons;
         }
 
-        protected void FindLargeItemSets()
+        public void FindLargeItemSets()
         {
         }
 
