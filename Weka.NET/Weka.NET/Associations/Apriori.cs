@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Weka.NET.Core;
+using System.Diagnostics.Contracts;
 
 namespace Weka.NET.Associations
 {
@@ -26,13 +27,10 @@ namespace Weka.NET.Associations
             MinSupport = minSupport;
         }
 
-        public IEnumerable<ItemSet> BuildAssociationRules(DataSet dataSet)
-        {
-            return null;
-        }
-
         public IList<ItemSet> BuildSingletons(IList<Weka.NET.Core.Attribute> attributes)
         {
+            Contract.Ensures(attributes.Any(attribute => attribute is NumericAttribute), "Can't handle numeric attributes");
+
             var singletons = new List<ItemSet>();
 
             for (int attributeIndex = 0; attributeIndex < attributes.Count; attributeIndex++)
@@ -69,7 +67,7 @@ namespace Weka.NET.Associations
                 return;
             }
 
-            int i = 0;
+            int size = 0;
 
             do
             {
@@ -77,7 +75,7 @@ namespace Weka.NET.Associations
 
                 var kMinusOneSets = new List<ItemSet>(kSets);
                 
-                kSets = MergeAllItemSets(kMinusOneSets, i);
+                kSets = MergeAllItemSets(kMinusOneSets, size);
 
                 var itemSetsWithCounter = GetHashtable(kMinusOneSets, kMinusOneSets.Count);
 
@@ -89,30 +87,138 @@ namespace Weka.NET.Associations
 
                 kSets = DeleteItemSets(kSets, necSupport);
                 
-                i++;
+                size++;
 
             } while (kSets.Count > 0);
 
         }
 
-        private IList<ItemSet> PruneItemSets(IList<ItemSet> kSets, IDictionary<ItemSet, int> itemSetsWithCounter)
+        public IEnumerable<ItemSet> BuildAssociationRules(DataSet dataSet)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
-        private IDictionary<ItemSet, int> GetHashtable(IList<ItemSet> kMinusOneSets, int initialSize)
+        private IList<ItemSet> PruneItemSets(IList<ItemSet> toPrune, IDictionary<ItemSet, int> kMinusOne)
         {
-            throw new NotImplementedException();
+            var pruned = new List<ItemSet>();
+
+            foreach (var itemSet in toPrune)
+            {
+                var prunedValues = new List<int?>(itemSet.Items);
+
+                for (int j = 0; j < prunedValues.Count; j++)
+                {
+                    if (false == prunedValues[j].HasValue)
+                    {
+                        continue;
+                    }
+
+                    var help = prunedValues[j];
+
+                    prunedValues[j] = null;
+
+                    prunedValues[j] = help;
+
+                    if (false == kMinusOne.ContainsKey(itemSet))
+                    {
+                        break;
+                    }
+
+                    if (j == itemSet.Items.Count)
+                    {
+                        pruned.Add(new ItemSet(items: prunedValues));
+                    }
+                }
+            }
+            return pruned;
         }
 
-        private IList<ItemSet> MergeAllItemSets(IList<ItemSet> kMinusOneSets, int i)
+        public IDictionary<ItemSet, int> GetHashtable(IList<ItemSet> itemSets, int initialSize)
         {
-            throw new NotImplementedException();
+            var itemSetTable = new Dictionary<ItemSet, int>();
+
+            foreach (ItemSet itemSet in itemSets)
+            {
+                itemSetTable[itemSet] = itemSet.Counter;
+            }
+
+            return itemSetTable;
         }
 
-        private IList<ItemSet> DeleteItemSets(IList<ItemSet> kSets, double necSupport)
+        public IList<ItemSet> MergeAllItemSets(IList<ItemSet> itemSets, int size)
         {
-            throw new NotImplementedException();
+            var newItemSets = new List<ItemSet>();
+
+            for (int i = 0; i < itemSets.Count;i++ )
+            {
+                var first = itemSets[i];
+
+                exit: for (int j = i + 1; j < itemSets.Count; j++)
+                {
+                    var second = itemSets[j];
+
+                    var newValues = new int?[first.Items.Count];
+
+                    // Find and copy common prefix of size 'size'
+                    int numFound = 0;
+                    int k = 0;
+                    while (numFound < size)
+                    {
+                        if (first.Items[k] == second.Items[k])
+                        {
+                            if (first.Items[k].HasValue)
+                            {
+                                numFound++;
+                            }
+
+                            newValues[k] = first.Items[k];
+                        }
+                        else
+                        {
+                            goto exit; //will fix this
+                        }
+
+                        k++;
+                    }
+
+                    // Check difference
+                    while (k < first.Items.Count)
+                    {
+                        if ((first.Items[k].HasValue) && (second.Items[k].HasValue))
+                        {
+                            break;
+                        }   
+                        else
+                        {
+                            if (first.Items[k].HasValue)
+                            {
+                                newValues[k] = first.Items[k];
+                            }
+                            else
+                            {
+                                newValues[k] = second.Items[k];
+                            }
+                        }
+                        k++;
+                    }
+
+                    if (k == first.Items.Count)
+                    {
+                        var newItemSet = new ItemSet(counter: 0, items:newValues);
+
+                        newItemSets.Add(newItemSet);
+                    }
+                }
+            }
+
+            return newItemSets;
+        }
+
+        private IList<ItemSet> DeleteItemSets(IList<ItemSet> itemSets, double minSupport)
+        {
+            var newItemSets = (from itemSet in itemSets where itemSet.Counter >= minSupport select itemSet).ToList();
+
+            return newItemSets;
         }
 
         public void UpdateCounters(IEnumerable<ItemSet> itemSets, DataSet dataSet)

@@ -14,7 +14,7 @@ namespace Weka.NET.Tests.Associations
     {
 
         [Test]
-        public void CanBuildSingletons()
+        public void CanBuildSingletonsForNominalAttributes()
         {
             //Given
             var dataSet = DataSetBuilder.AnyDataSet()
@@ -39,6 +39,7 @@ namespace Weka.NET.Tests.Associations
         }
 
         [Test]
+        [Ignore("not ready yet")]
         public void CanFindLargeItemSet()
         {
             //Given
