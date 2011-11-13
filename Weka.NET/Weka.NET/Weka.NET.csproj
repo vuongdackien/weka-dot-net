@@ -43,12 +43,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\DataSetBuilder.cs" />
+    <Compile Include="Utils\Arrays.cs" />
     <Compile Include="Associations\Apriori.cs" />
+    <Compile Include="Associations\ItemSet.cs" />
     <Compile Include="Classifiers\IClassifier.cs" />
     <Compile Include="Classifiers\OneRuleClassifier.cs" />
     <Compile Include="Core\Attribute.cs" />
     <Compile Include="Core\DataSet.cs" />
-    <Compile Include="Core\DataSetBuilder.cs" />
+    <Compile Include="Core\DataSetTransformer.cs" />
     <Compile Include="Core\Instance.cs" />
     <Compile Include="Core\NominalAttribute.cs" />
     <Compile Include="Core\NumericAttribute.cs" />

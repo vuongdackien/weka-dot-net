@@ -26,7 +26,7 @@ namespace Weka.NET.Classifiers
                 throw new ArgumentException("");
             }
 
-            var dataSetBuilder = new DataSetBuilder(trainingSet);
+            var dataSetBuilder = new DataSetTransformer(trainingSet);
 
             dataSetBuilder.DeleteWithMissingClass(classIndex);
 

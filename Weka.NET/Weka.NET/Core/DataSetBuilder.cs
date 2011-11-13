@@ -2,40 +2,55 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Weka.NET.Core;
 
 namespace Weka.NET.Core
 {
     public class DataSetBuilder
     {
-        readonly DataSet originalSet;
-
-        IList<Instance> instances;
-
-        public int Count { get { return instances.Count; } }
-
-        public DataSetBuilder(DataSet originalSet)
+        
+        public static DataSetBuilder AnyDataSet()
         {
-            this.originalSet = originalSet;
-
-            instances = new List<Instance>(this.originalSet.Instances);
+            return new DataSetBuilder();
         }
 
-        internal void DeleteWithMissingClass(int classIndex)
-        {
-            var enumerator = instances.GetEnumerator();
+        string relationName;
 
-            while (enumerator.MoveNext())
+        IList<Weka.NET.Core.Attribute> attributes = new List<Weka.NET.Core.Attribute>();
+
+        IList<Instance> instances = new List<Instance>();
+
+        public DataSetBuilder WithRelationName(string name)
+        {
+            relationName = name;
+
+            return this;
+        }
+
+        public DataSetBuilder WithNominalAttribute(string name, string[] values)
+        {
+            attributes.Add( new NominalAttribute(name, attributes.Count, values) );
+
+            return this;
+        }
+
+        public DataSetBuilder AddData(string[] values)
+        {
+            var encoded = new double?[values.Length];
+
+            for(int i=0;i<values.Length;i++)
             {
-                if (false == enumerator.Current[classIndex].HasValue)
-                {
-                    
-                }
+                encoded[i] = attributes[i].Encode(values[i]);               
             }
+
+            instances.Add(new Instance(encoded));
+
+            return this;
         }
 
-        internal DataSet Build()
+        public DataSet Build()
         {
-            return new DataSet(instances: instances);
+            return new DataSet(name:relationName, attributes: attributes, instances: instances);
         }
     }
 }

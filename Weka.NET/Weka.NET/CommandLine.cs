@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Weka.NET.Associations;
 
 namespace Weka.NET
 {
-    class CommandLine
+    public class CommandLine
     {
         static void Main(string[] args)
         {
+
+
+
+
         }
     }
 }

@@ -9,6 +9,8 @@ namespace Weka.NET.Core
     {
         readonly string[] values;
 
+        public string[] Values { get { return values; } }
+
         public NominalAttribute(string name, int index, string[] values) : base(name, index)
         {
             this.values = values.Clone() as string[];

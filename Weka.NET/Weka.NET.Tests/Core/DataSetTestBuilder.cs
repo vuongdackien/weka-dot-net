@@ -10,7 +10,7 @@ namespace Weka.NET.Tests.Core
     {
         public static DataSet WeatherNominal()
         {
-            return DataSetTestBuilder.AnyDataSet()
+            return DataSetBuilder.AnyDataSet()
                 .WithRelationName("weather.symbolic")
 
                 .WithNominalAttribute(name:"outlook", values: new[]{"sunny", "overcast", "rainy"})
@@ -35,54 +35,6 @@ namespace Weka.NET.Tests.Core
                 .AddData(new[] { "rainy", "mild", "high", "TRUE", "no" })
                 
                 .Build();
-        }
-    }
-
-    public class DataSetTestBuilder
-    {
-        
-        public static DataSetTestBuilder AnyDataSet()
-        {
-            return new DataSetTestBuilder();
-        }
-
-        string relationName;
-
-        IList<Weka.NET.Core.Attribute> attributes = new List<Weka.NET.Core.Attribute>();
-
-        IList<Instance> instances = new List<Instance>();
-
-        public DataSetTestBuilder WithRelationName(string name)
-        {
-            relationName = name;
-
-            return this;
-        }
-
-        public DataSetTestBuilder WithNominalAttribute(string name, string[] values)
-        {
-            attributes.Add( new NominalAttribute(name, attributes.Count, values) );
-
-            return this;
-        }
-
-        public DataSetTestBuilder AddData(string[] values)
-        {
-            var encoded = new double?[values.Length];
-
-            for(int i=0;i<values.Length;i++)
-            {
-                encoded[i] = attributes[i].Encode(values[i]);               
-            }
-
-            instances.Add(new Instance(encoded));
-
-            return this;
-        }
-
-        public DataSet Build()
-        {
-            return new DataSet(instances);
         }
     }
 }

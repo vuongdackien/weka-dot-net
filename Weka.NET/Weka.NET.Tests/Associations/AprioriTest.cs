@@ -12,7 +12,7 @@ namespace Weka.NET.Tests.Associations
     [TestFixture]
     public class AprioriTest
     {
-        [Test]
+ 
         public void CanBuildExtractRulesForNominalDataSet()
         {
             var apriori = new Apriori(minSupport:10);
@@ -23,44 +23,53 @@ namespace Weka.NET.Tests.Associations
 
             //Ensure rules are generated as expected
         }
+
+        [Test]
+        public void CanBuildSingletons()
+        {
+            //Given
+            var dataSet = DataSetBuilder.AnyDataSet()
+                .WithNominalAttribute
+                    (name: "first_attribute", values: new[] { "first0", "first1" })
+                .WithNominalAttribute
+                    (name: "second_attribute", values: new[] { "second0", "second1" })
+
+                .Build();
+
+            var apriori = new Apriori(minSupport: 1);
+
+            //When
+            var singletons = apriori.BuildAssociationRules(dataSet);
+
+            //Then
+            Assert.AreEqual(4, singletons.Count());
+            Assert.IsTrue(singletons.Contains(new ItemSet(counter:0, items:new int?[]{null,0})));
+            Assert.IsTrue(singletons.Contains(new ItemSet(counter: 0, items: new int?[] { null, 1 })));
+            Assert.IsTrue(singletons.Contains(new ItemSet(counter: 0, items: new int?[] { 1, null })));
+            Assert.IsTrue(singletons.Contains(new ItemSet(counter: 0, items: new int?[] { 1, null })));
+        }
+
+        static void Main(string[] args)
+        {
+            var dataSet = DataSetBuilder.AnyDataSet()
+    .WithNominalAttribute
+        (name: "first_attribute", values: new[] { "first0", "first1" })
+    .WithNominalAttribute
+        (name: "second_attribute", values: new[] { "second0", "second1" })
+    .AddData(values: new[] { "first0", "second0" })
+    .AddData(values: new[] { "first1", "second0" })
+    .AddData(values: new[] { "first0", "second1" })
+        .Build();
+
+            var apriori = new Apriori(minSupport: 1);
+
+            var singletons = apriori.BuildAssociationRules(dataSet);
+
+            Console.WriteLine(singletons);
+        }    
+
+
+
+    
     }
-
-    [TestFixture]
-    public class ItemSetTest
-    {
-        [Test]
-        public void ContainedByReturnsTrueIfInstanceContainsItemSet()
-        {
-            var someInstance = new Instance(values: new List<double?> { 1d, 2d, 3d });
-
-            var someItemSet = new ItemSet(counter: 1,  items: new List<int?>{ null, 2, 3 } );
-
-            Assert.IsTrue( someItemSet.ContainedBy(someInstance) );
-        }
-
-        [Test]
-        public void ContainedByReturnsFalseIfInstanceDoesntContainItemSet()
-        {
-            var someInstance = new Instance(values: new List<double?> { 1d, 2d });
-
-            var someItemSet = new ItemSet(counter: 1, items: new List<int?> { null, 5 });
-
-            Assert.IsFalse(someItemSet.ContainedBy(someInstance));
-        }
-
-        [Test]
-        public void EnsureConfidenceForRuleDividesConsequenceCounterByPremiseCounter()
-        {
-            var consequence = new ItemSet(counter: 10, items: new List<int?>{1,2});
-
-            var premise = new ItemSet(counter: 10, items: new List<int?> { 1, 2 });
-
-            double actual = ItemSet.ConfidenceForRule(premise, consequence);
-
-            Assert.AreEqual((double)consequence.Counter / (double)premise.Counter, actual, 0d);
-        }
-
-    }
-
-
 }

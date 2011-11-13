@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Weka.NET.Core;
+using System.Runtime.CompilerServices;
 
 namespace Weka.NET.Associations
 {
@@ -26,10 +27,31 @@ namespace Weka.NET.Associations
             get { return Items[index]; }
         }
 
+        public ItemSet(IEnumerable<int?> items) : this(counter:0, items:items)
+        {
+        }
+
         public ItemSet(int counter, IEnumerable<int?> items)
         {
             Counter = counter;
             Items = items.ToList().AsReadOnly();
+        }
+
+        public override bool Equals(object other)
+        {
+            if (other is ItemSet)
+            {
+                var otherItemSet = other as ItemSet;
+
+                return Counter == otherItemSet.Counter
+                    && Enumerable.SequenceEqual(Items, otherItemSet.Items);
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return 13 * Counter * RuntimeHelpers.GetHashCode(Items);
         }
 
         public static double ConfidenceForRule(ItemSet premise, ItemSet consequence)

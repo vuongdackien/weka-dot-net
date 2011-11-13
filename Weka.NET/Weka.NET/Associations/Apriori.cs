@@ -21,9 +21,27 @@ namespace Weka.NET.Associations
             MinSupport = minSupport;
         }
 
-        public IEnumerable<ItemSet> BuildAssociationRules(DataSet instances)
+        public IEnumerable<ItemSet> BuildAssociationRules(DataSet dataSet)
         {
-            return null;
+            var singletons = new List<ItemSet>();
+
+            for (int attributeIndex=0;attributeIndex<dataSet.Attributes.Count;attributeIndex++)
+            {
+                var values = (dataSet.Attributes[attributeIndex] as NominalAttribute).Values;
+
+                for(int valueIndex=0;valueIndex<values.Length;valueIndex++)
+                {
+                    var items = new int?[dataSet.Attributes.Count];
+
+                    items[attributeIndex] = valueIndex;
+
+                    var itemSet = new ItemSet(items: items);
+
+                    singletons.Add(itemSet);
+                }
+            }
+
+            return singletons;
         }
 
         protected void FindLargeItemSets()
