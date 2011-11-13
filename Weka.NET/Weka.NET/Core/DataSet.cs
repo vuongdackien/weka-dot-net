@@ -26,6 +26,8 @@ namespace Weka.NET.Core
             Instances = instances.ToList().AsReadOnly();
         }
 
+        public int Count { get { return Instances.Count; } }
+
         public override string ToString()
         {
             var buff = new StringBuilder();

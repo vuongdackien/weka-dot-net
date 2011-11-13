@@ -28,7 +28,7 @@ namespace Weka.NET.Tests.Associations
             var apriori = new Apriori(minSupport: 1);
 
             //When
-            var singletons = apriori.BuildAssociationRules(dataSet);
+            var singletons = apriori.BuildSingletons(dataSet.Attributes);
 
             //Then
             Assert.AreEqual(4, singletons.Count());
@@ -58,6 +58,11 @@ namespace Weka.NET.Tests.Associations
                 .Build();
 
             var apriori = new Apriori(minSupport: 1);
+
+            //When
+            apriori.FindLargeItemSets(dataSet);
+        
+            
         }
 
         public void CanBuildExtractRulesForNominalDataSet()

@@ -13,11 +13,6 @@ namespace Weka.NET.Associations
     /// </summary>
     public class ItemSet
     {
-        public static IEnumerable<ItemSet> BuildSingletons(params Instance[] instances)
-        {
-            return null;
-        }
-
         public IList<int?> Items { private set; get; }
 
         public int Counter { private set; get; }
@@ -35,6 +30,18 @@ namespace Weka.NET.Associations
         {
             Counter = counter;
             Items = items.ToList().AsReadOnly();
+        }
+
+        public static ItemSet operator ++(ItemSet itemSet)
+        {
+            itemSet.UpdateCounter();
+
+            return itemSet;
+        }
+
+        public void UpdateCounter()
+        {
+            Counter++;
         }
 
         public override bool Equals(object other)
