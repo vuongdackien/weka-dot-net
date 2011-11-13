@@ -29,7 +29,7 @@ namespace Weka.NET.Associations
 
         public IList<ItemSet> BuildSingletons(IList<Weka.NET.Core.Attribute> attributes)
         {
-            Contract.Ensures(attributes.Any(attribute => attribute is NumericAttribute), "Can't handle numeric attributes");
+            CodeContract.NotSupportedNumericAttributes(attributes);
 
             var singletons = new List<ItemSet>();
 

@@ -8,7 +8,6 @@ namespace Weka.NET.Core
 {
     public class DataSetBuilder
     {
-        
         public static DataSetBuilder AnyDataSet()
         {
             return new DataSetBuilder();
@@ -23,6 +22,13 @@ namespace Weka.NET.Core
         public DataSetBuilder WithRelationName(string name)
         {
             relationName = name;
+
+            return this;
+        }
+
+        public DataSetBuilder WithNumericAttribute(string name)
+        {
+            attributes.Add(new NumericAttribute(name: name, index:attributes.Count));
 
             return this;
         }
@@ -52,5 +58,7 @@ namespace Weka.NET.Core
         {
             return new DataSet(name:relationName, attributes: attributes, instances: instances);
         }
+
+
     }
 }

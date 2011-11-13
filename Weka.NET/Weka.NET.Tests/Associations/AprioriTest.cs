@@ -12,6 +12,20 @@ namespace Weka.NET.Tests.Associations
     [TestFixture]
     public class AprioriTest
     {
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void CannotBuildSingletonsForNumericAttributes()
+        {
+            //Given
+            var dataSet = DataSetBuilder.AnyDataSet()
+                .WithNumericAttribute
+                    (name: "some_numeric_attribute").Build();
+
+            //When
+            new Apriori(minSupport: 1).BuildSingletons(dataSet.Attributes);
+
+            //Then expect exception
+        }
 
         [Test]
         public void CanBuildSingletonsForNominalAttributes()
