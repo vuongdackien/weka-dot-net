@@ -68,9 +68,9 @@ namespace Weka.NET.Associations
             
             var kSets = BuildSingletons(dataSet.Attributes);
             
-            kSets = UpdateCounters(kSets, dataSet);
+            UpdateCounters(kSets, dataSet);
 
-            DeleteItemSets(kSets, necSupport);
+            DeleteItemSets(kSets, (int) necSupport);
 
             if (kSets.Count == 0)
             {
@@ -95,7 +95,7 @@ namespace Weka.NET.Associations
 
                 UpdateCounters(kSets, dataSet);
 
-                kSets = DeleteItemSets(kSets, necSupport);
+                kSets = DeleteItemSets(kSets, (int) necSupport);
                 
                 size++;
 
@@ -224,29 +224,33 @@ namespace Weka.NET.Associations
             return newItemSets;
         }
 
-        private IList<ItemSet> DeleteItemSets(IList<ItemSet> itemSets, double minSupport)
+        public IList<ItemSet> DeleteItemSets(IList<ItemSet> itemSets, int minSupport)
         {
             var newItemSets = (from itemSet in ItemSetCounts where itemSet.Value >= minSupport select itemSet.Key).ToList();
 
             return newItemSets;
         }
 
-        public IList<ItemSet> UpdateCounters(IEnumerable<ItemSet> itemSets, DataSet dataSet)
+        public void UpdateCounters(IEnumerable<ItemSet> itemSets, DataSet dataSet)
         {
-            foreach (var instance in dataSet.Instances)
+            foreach (var itemSet in itemSets)
             {
-                foreach (var itemSet in itemSets)
+                foreach (var instance in dataSet.Instances)
                 {
                     if (itemSet.ContainedBy(instance))
                     {
-                       // itemSet.UpdateCounter();
+                        if (itemSetCounts.ContainsKey(itemSet))
+                        {
+                            itemSetCounts[itemSet]++;
+                        }
+                        else
+                        {
+                            itemSetCounts[itemSet] = 1;
+                        }
                     }
                 }
             }
-
-            return null;
         }
-
 
 
         protected void FindRulesBruteForce()

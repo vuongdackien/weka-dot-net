@@ -46,6 +46,22 @@ namespace Weka.NET.Associations
             return (double)premiseCount / (double)consequenceCount;
         }
 
+        public override string ToString()
+        {
+            var buff = new StringBuilder("ItemSet{items:[");
+            
+            foreach (var item in Items)
+            {
+                buff.Append(item.HasValue ? item.Value.ToString() : "null");
+                buff.Append(",");
+            }
+            buff.Replace(',', ']', buff.Length - 1, 1);
+
+            buff.Append("}");
+
+            return buff.ToString();
+        }
+
         public bool ContainedBy(Instance instance)
         {
             for (int i = 0; i < Items.Count; i++)

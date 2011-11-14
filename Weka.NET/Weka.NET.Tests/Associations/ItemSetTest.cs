@@ -42,6 +42,5 @@ namespace Weka.NET.Tests.Associations
 
             Assert.AreEqual((double)premiseCount / (double)consequenceCount, actual, 0d);
         }
-
     }
 }
