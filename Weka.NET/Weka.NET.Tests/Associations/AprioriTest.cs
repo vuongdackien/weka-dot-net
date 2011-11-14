@@ -46,10 +46,10 @@ namespace Weka.NET.Tests.Associations
 
             //Then
             Assert.AreEqual(4, singletons.Count());
-            Assert.IsTrue(singletons.Contains(new ItemSet(counter: 0, items: new int?[] { null, 0 })));
-            Assert.IsTrue(singletons.Contains(new ItemSet(counter: 0, items: new int?[] { null, 1 })));
-            Assert.IsTrue(singletons.Contains(new ItemSet(counter: 0, items: new int?[] { 1, null })));
-            Assert.IsTrue(singletons.Contains(new ItemSet(counter: 0, items: new int?[] { 1, null })));
+            Assert.IsTrue(singletons.Contains(new ItemSet(items: new int?[] { null, 0 })));
+            Assert.IsTrue(singletons.Contains(new ItemSet(items: new int?[] { null, 1 })));
+            Assert.IsTrue(singletons.Contains(new ItemSet(items: new int?[] { 1, null })));
+            Assert.IsTrue(singletons.Contains(new ItemSet(items: new int?[] { 1, null })));
         }
 
         [Test]

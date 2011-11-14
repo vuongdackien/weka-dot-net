@@ -5,11 +5,22 @@ using System.Text;
 using Weka.NET.Core;
 using System.Diagnostics.Contracts;
 
+
 namespace Weka.NET.Associations
 {
     [Serializable]
     public class Apriori
     {
+        /// <summary>
+        /// ItemSet counts
+        /// </summary>
+        readonly IDictionary<ItemSet, int> itemSetCounts;
+
+        public IDictionary<ItemSet,int> ItemSetCounts 
+        {
+            get { return new Dictionary<ItemSet, int>(itemSetCounts); }
+        }
+
         /// <summary>
         /// The minimum support
         /// </summary>
@@ -20,11 +31,10 @@ namespace Weka.NET.Associations
         /** The set of all sets of itemsets L. */
         IList<IList<ItemSet>> m_Ls;
 
-        IList<IDictionary<ItemSet, int>> itemsWithCounters;
-
         public Apriori(int minSupport)
         {
             MinSupport = minSupport;
+            itemSetCounts = new Dictionary<ItemSet, int>();
         }
 
         public IList<ItemSet> BuildSingletons(IList<Weka.NET.Core.Attribute> attributes)
@@ -58,7 +68,7 @@ namespace Weka.NET.Associations
             
             var kSets = BuildSingletons(dataSet.Attributes);
             
-            UpdateCounters(kSets, dataSet);
+            kSets = UpdateCounters(kSets, dataSet);
 
             DeleteItemSets(kSets, necSupport);
 
@@ -79,7 +89,7 @@ namespace Weka.NET.Associations
 
                 var itemSetsWithCounter = GetHashtable(kMinusOneSets, kMinusOneSets.Count);
 
-                itemsWithCounters.Add(itemSetsWithCounter);
+               // itemSetCounts.Add(itemSetsWithCounter);
 
                 kSets = PruneItemSets(kSets, itemSetsWithCounter);
 
@@ -139,7 +149,7 @@ namespace Weka.NET.Associations
 
             foreach (ItemSet itemSet in itemSets)
             {
-                itemSetTable[itemSet] = itemSet.Counter;
+               // itemSetTable[itemSet] = itemSet.Counter;
             }
 
             return itemSetTable;
@@ -204,7 +214,7 @@ namespace Weka.NET.Associations
 
                     if (k == first.Items.Count)
                     {
-                        var newItemSet = new ItemSet(counter: 0, items:newValues);
+                        var newItemSet = new ItemSet(items:newValues);
 
                         newItemSets.Add(newItemSet);
                     }
@@ -216,12 +226,12 @@ namespace Weka.NET.Associations
 
         private IList<ItemSet> DeleteItemSets(IList<ItemSet> itemSets, double minSupport)
         {
-            var newItemSets = (from itemSet in itemSets where itemSet.Counter >= minSupport select itemSet).ToList();
+            var newItemSets = (from itemSet in ItemSetCounts where itemSet.Value >= minSupport select itemSet.Key).ToList();
 
             return newItemSets;
         }
 
-        public void UpdateCounters(IEnumerable<ItemSet> itemSets, DataSet dataSet)
+        public IList<ItemSet> UpdateCounters(IEnumerable<ItemSet> itemSets, DataSet dataSet)
         {
             foreach (var instance in dataSet.Instances)
             {
@@ -229,10 +239,12 @@ namespace Weka.NET.Associations
                 {
                     if (itemSet.ContainedBy(instance))
                     {
-                        itemSet.UpdateCounter();
+                       // itemSet.UpdateCounter();
                     }
                 }
             }
+
+            return null;
         }
 
 

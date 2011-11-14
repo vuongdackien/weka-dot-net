@@ -15,33 +15,14 @@ namespace Weka.NET.Associations
     {
         public IList<int?> Items { private set; get; }
 
-        public int Counter { private set; get; }
-
         public int? this[int index]
         {
             get { return Items[index]; }
         }
 
-        public ItemSet(IEnumerable<int?> items) : this(counter:0, items:items)
+        public ItemSet(IEnumerable<int?> items) 
         {
-        }
-
-        public ItemSet(int counter, IEnumerable<int?> items)
-        {
-            Counter = counter;
             Items = items.ToList().AsReadOnly();
-        }
-
-        public static ItemSet operator ++(ItemSet itemSet)
-        {
-            itemSet.UpdateCounter();
-
-            return itemSet;
-        }
-
-        public void UpdateCounter()
-        {
-            Counter++;
         }
 
         public override bool Equals(object other)
@@ -50,20 +31,19 @@ namespace Weka.NET.Associations
             {
                 var otherItemSet = other as ItemSet;
 
-                return Counter == otherItemSet.Counter
-                    && Enumerable.SequenceEqual(Items, otherItemSet.Items);
+                return Enumerable.SequenceEqual(Items, otherItemSet.Items);
             }
             return false;
         }
 
         public override int GetHashCode()
         {
-            return 13 * Counter * RuntimeHelpers.GetHashCode(Items);
+            return 13 * RuntimeHelpers.GetHashCode(Items);
         }
 
-        public static double ConfidenceForRule(ItemSet premise, ItemSet consequence)
+        public static double ConfidenceForRule(int premiseCount, int consequenceCount)
         {
-            return (double)consequence.Counter / (double)premise.Counter;
+            return (double)premiseCount / (double)consequenceCount;
         }
 
         public bool ContainedBy(Instance instance)

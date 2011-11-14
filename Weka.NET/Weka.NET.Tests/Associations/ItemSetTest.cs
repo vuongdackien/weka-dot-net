@@ -12,14 +12,12 @@ namespace Weka.NET.Tests.Associations
     [TestFixture]
     public class ItemSetTest
     {
-
-
         [Test]
         public void ContainedByReturnsTrueIfInstanceContainsItemSet()
         {
             var someInstance = new Instance(values: new List<double?> { 1d, 2d, 3d });
 
-            var someItemSet = new ItemSet(counter: 1, items: new List<int?> { null, 2, 3 });
+            var someItemSet = new ItemSet(items: new List<int?> { null, 2, 3 });
 
             Assert.IsTrue(someItemSet.ContainedBy(someInstance));
         }
@@ -29,7 +27,7 @@ namespace Weka.NET.Tests.Associations
         {
             var someInstance = new Instance(values: new List<double?> { 1d, 2d });
 
-            var someItemSet = new ItemSet(counter: 1, items: new List<int?> { null, 5 });
+            var someItemSet = new ItemSet(items: new List<int?> { null, 5 });
 
             Assert.IsFalse(someItemSet.ContainedBy(someInstance));
         }
@@ -37,13 +35,12 @@ namespace Weka.NET.Tests.Associations
         [Test]
         public void EnsureConfidenceForRuleDividesConsequenceCounterByPremiseCounter()
         {
-            var consequence = new ItemSet(counter: 10, items: new List<int?> { 1, 2 });
+            var consequenceCount = 3;
+            var premiseCount = 9;
 
-            var premise = new ItemSet(counter: 10, items: new List<int?> { 1, 2 });
+            double actual = ItemSet.ConfidenceForRule(premiseCount, consequenceCount);
 
-            double actual = ItemSet.ConfidenceForRule(premise, consequence);
-
-            Assert.AreEqual((double)consequence.Counter / (double)premise.Counter, actual, 0d);
+            Assert.AreEqual((double)premiseCount / (double)consequenceCount, actual, 0d);
         }
 
     }
