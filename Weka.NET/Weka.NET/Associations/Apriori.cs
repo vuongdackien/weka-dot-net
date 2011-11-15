@@ -68,9 +68,9 @@ namespace Weka.NET.Associations
             
             var kSets = BuildSingletons(dataSet.Attributes);
             
-            UpdateCounters(kSets, dataSet);
+            UpdateCounts(kSets, dataSet);
 
-            DeleteItemSets(kSets, (int) necSupport);
+            kSets = DeleteItemSets(kSets, (int) necSupport);
 
             if (kSets.Count == 0)
             {
@@ -87,13 +87,11 @@ namespace Weka.NET.Associations
                 
                 kSets = MergeAllItemSets(kMinusOneSets, size);
 
-                var itemSetsWithCounter = GetHashtable(kMinusOneSets, kMinusOneSets.Count);
+                UpdateCounts(kMinusOneSets, dataSet);
 
-               // itemSetCounts.Add(itemSetsWithCounter);
+                kSets = PruneItemSets(kSets, kMinusOneSets);
 
-                kSets = PruneItemSets(kSets, itemSetsWithCounter);
-
-                UpdateCounters(kSets, dataSet);
+                UpdateCounts(kSets, dataSet);
 
                 kSets = DeleteItemSets(kSets, (int) necSupport);
                 
@@ -108,15 +106,17 @@ namespace Weka.NET.Associations
             return null;
         }
 
-        private IList<ItemSet> PruneItemSets(IList<ItemSet> toPrune, IDictionary<ItemSet, int> kMinusOne)
+        public IList<ItemSet> PruneItemSets(IList<ItemSet> toPrune, IList<ItemSet> kMinusOne)
         {
             var pruned = new List<ItemSet>();
 
             foreach (var itemSet in toPrune)
             {
-                var prunedValues = new List<int?>(itemSet.Items);
+                var prunedValues = itemSet.Items.ToArray();
 
-                for (int j = 0; j < prunedValues.Count; j++)
+                int j;
+
+                for (j = 0; j < prunedValues.Length; j++)
                 {
                     if (false == prunedValues[j].HasValue)
                     {
@@ -127,101 +127,84 @@ namespace Weka.NET.Associations
 
                     prunedValues[j] = null;
 
-                    prunedValues[j] = help;
-
-                    if (false == kMinusOne.ContainsKey(itemSet))
+                    if (false == kMinusOne.Contains(new ItemSet(prunedValues)))
                     {
+                        prunedValues[j] = help;
+
                         break;
                     }
 
-                    if (j == itemSet.Items.Count)
-                    {
-                        pruned.Add(new ItemSet(items: prunedValues));
-                    }
+                    prunedValues[j] = help;
+                }
+
+                if (j == prunedValues.Length)
+                {
+                    pruned.Add(new ItemSet(items: prunedValues));
                 }
             }
             return pruned;
-        }
-
-        public IDictionary<ItemSet, int> GetHashtable(IList<ItemSet> itemSets, int initialSize)
-        {
-            var itemSetTable = new Dictionary<ItemSet, int>();
-
-            foreach (ItemSet itemSet in itemSets)
-            {
-               // itemSetTable[itemSet] = itemSet.Counter;
-            }
-
-            return itemSetTable;
         }
 
         public IList<ItemSet> MergeAllItemSets(IList<ItemSet> itemSets, int size)
         {
             var newItemSets = new List<ItemSet>();
 
-            for (int i = 0; i < itemSets.Count;i++ )
+            for(int firstIndex = 0;firstIndex<itemSets.Count;firstIndex++)
             {
-                var first = itemSets[i];
-
-                exit: for (int j = i + 1; j < itemSets.Count; j++)
+                for (int secondIndex = firstIndex + 1; secondIndex < itemSets.Count; secondIndex++)
                 {
-                    var second = itemSets[j];
-
-                    var newValues = new int?[first.Items.Count];
-
-                    // Find and copy common prefix of size 'size'
-                    int numFound = 0;
-                    int k = 0;
-                    while (numFound < size)
-                    {
-                        if (first.Items[k] == second.Items[k])
-                        {
-                            if (first.Items[k].HasValue)
-                            {
-                                numFound++;
-                            }
-
-                            newValues[k] = first.Items[k];
-                        }
-                        else
-                        {
-                            goto exit; //will fix this
-                        }
-
-                        k++;
-                    }
-
-                    // Check difference
-                    while (k < first.Items.Count)
-                    {
-                        if ((first.Items[k].HasValue) && (second.Items[k].HasValue))
-                        {
-                            break;
-                        }   
-                        else
-                        {
-                            if (first.Items[k].HasValue)
-                            {
-                                newValues[k] = first.Items[k];
-                            }
-                            else
-                            {
-                                newValues[k] = second.Items[k];
-                            }
-                        }
-                        k++;
-                    }
-
-                    if (k == first.Items.Count)
-                    {
-                        var newItemSet = new ItemSet(items:newValues);
-
-                        newItemSets.Add(newItemSet);
-                    }
+                    MergeItems(itemSets, firstIndex, secondIndex, newItemSets, size);
                 }
             }
 
             return newItemSets;
+        }
+
+        protected void MergeItems(IList<ItemSet> itemSets, int firstIndex, int secondIndex, IList<ItemSet> newItemSets, int size)
+        {
+            var newValues = new int?[itemSets[firstIndex].Items.Count];
+
+            //Find and copy common prefix of size 'size'
+            int numFound = 0;
+
+            int k = 0;
+
+            while (numFound < size) //up to size
+            {
+                if (itemSets[firstIndex].Items[k] != itemSets[secondIndex].Items[k])
+                {
+                    return;
+                }
+
+                if (itemSets[firstIndex].Items[k].HasValue)
+                {
+                    numFound++;
+                }
+
+                newValues[k] = itemSets[firstIndex].Items[k];
+
+                k++;
+            }
+
+            while (k < itemSets[firstIndex].Items.Count)
+            {
+                if (itemSets[firstIndex].Items[k].HasValue && itemSets[secondIndex].Items[k].HasValue)
+                {
+                    break;
+                }
+
+                newValues[k] = itemSets[firstIndex].Items[k].HasValue ?
+                    itemSets[firstIndex].Items[k] : itemSets[secondIndex].Items[k];
+
+                k++;
+            }
+
+            // Check difference
+            if (k == itemSets[firstIndex].Items.Count)
+            {
+                newItemSets.Add(new ItemSet(items: newValues));
+            }
+
         }
 
         public IList<ItemSet> DeleteItemSets(IList<ItemSet> itemSets, int minSupport)
@@ -231,7 +214,7 @@ namespace Weka.NET.Associations
             return newItemSets;
         }
 
-        public void UpdateCounters(IEnumerable<ItemSet> itemSets, DataSet dataSet)
+        public void UpdateCounts(IEnumerable<ItemSet> itemSets, DataSet dataSet)
         {
             foreach (var itemSet in itemSets)
             {

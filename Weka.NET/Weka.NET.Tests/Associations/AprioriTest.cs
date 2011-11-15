@@ -13,6 +13,72 @@ namespace Weka.NET.Tests.Associations
     public class AprioriTest
     {
         [Test]
+        public void CanMergeSimilarItemsWithSizeLessThanLength()
+        {
+            //Given
+            var itemSets = new List<ItemSet>
+                {
+                    new ItemSet(new int?[] { null, 0, 1 })
+                    , new ItemSet(new int?[] { null, 0, null })
+                };
+
+
+            //When
+            var apriori = new Apriori(1);
+
+            var merged = apriori.MergeAllItemSets(itemSets, 1);
+
+            //Then
+            Assert.AreEqual(new List<ItemSet> { new ItemSet(new int?[] { null, 0, 1 }) }, merged);
+        }
+
+        
+        [Test]
+        public void CanMergeSimilarItems()
+        {
+            //Given
+            var itemSets = new List<ItemSet>
+                {
+                    new ItemSet(new int?[] { null, 0, 1 })
+                    , new ItemSet(new int?[] { null, 0, 1 })
+                };
+
+
+            //When
+            var apriori = new Apriori(1);
+
+            var merged = apriori.MergeAllItemSets(itemSets, 2);
+        
+            //Then
+            Assert.AreEqual(new List<ItemSet> { new ItemSet(new int?[] { null, 0, 1 })  }, merged);
+        }
+
+        [Test]
+        public void CanPruneItemSets()
+        {
+            //Given
+            var toPrune = new List<ItemSet>
+                {
+                    new ItemSet(new int?[] { 0, 1, 0 })
+                };
+
+            var kMinusOne = new List<ItemSet>
+                {
+                    new ItemSet(new int?[] { null, 1, 0 }) 
+                    , new ItemSet(new int?[] { 0, null, 0 }) 
+                    , new ItemSet(new int?[] { 0, 1, null })
+                };
+
+            //When
+            var apriori = new Apriori(1);
+
+            var pruned = apriori.PruneItemSets(toPrune, kMinusOne);
+        
+            //Then
+            Assert.AreEqual(toPrune, pruned);
+        }
+
+        [Test]
         public void DeletingItemSetsWithLowSupport()
         {
             //Given
@@ -43,7 +109,7 @@ namespace Weka.NET.Tests.Associations
 
             //When
             var apriori = new Apriori(1);
-            apriori.UpdateCounters(itemSets.Keys, dataSet);
+            apriori.UpdateCounts(itemSets.Keys, dataSet);
 
             //Then
             var actual = apriori.DeleteItemSets(itemSets.Keys.ToList(), 3);
@@ -87,7 +153,7 @@ namespace Weka.NET.Tests.Associations
 
             //When
             var apriori = new Apriori(1);
-            apriori.UpdateCounters(expectedCounts.Keys, dataSet);
+            apriori.UpdateCounts(expectedCounts.Keys, dataSet);
 
             //Then
             Assert.AreEqual(expectedCounts, apriori.ItemSetCounts);
@@ -132,46 +198,6 @@ namespace Weka.NET.Tests.Associations
             Assert.IsTrue(singletons.Contains(new ItemSet(items: new int?[] { 1, null })));
             Assert.IsTrue(singletons.Contains(new ItemSet(items: new int?[] { 1, null })));
         }
-
-        [Test]
-        [Ignore("not ready yet")]
-        public void CanFindLargeItemSet()
-        {
-            //Given
-            var dataSet = DataSetBuilder.AnyDataSet()
-                .WithNominalAttribute
-                    (name: "first_attribute", values: new[] { "first0", "first1" })
-                .WithNominalAttribute
-                    (name: "second_attribute", values: new[] { "second0", "second1" })
-
-                .AddData(values:new[] { "first0", "second0" })
-                .AddData(values:new[] { "first0", "second1" })
-                .AddData(values:new[] { "first0", "second1" })
-                .AddData(values:new[] { "first0", "second1" })
-                .AddData(values:new[] { "first1", "second1" })
-                .AddData(values:new[] { "first1", "second1" })
-
-                .Build();
-
-            var apriori = new Apriori(minSupport: 1);
-
-            //When
-            apriori.FindLargeItemSets(dataSet);
-        
-            
-        }
-
-        public void CanBuildExtractRulesForNominalDataSet()
-        {
-            var apriori = new Apriori(minSupport:10);
-
-            var dataSet = TestSets.WeatherNominal();
-
-            var rules = apriori.BuildAssociationRules(dataSet);
-
-            //Ensure rules are generated as expected
-        }
-
     
     }
 }
