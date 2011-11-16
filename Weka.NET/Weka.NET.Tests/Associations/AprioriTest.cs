@@ -13,6 +13,72 @@ namespace Weka.NET.Tests.Associations
     public class AprioriTest
     {
         [Test]
+        public void CanGenerateAllRulesWithOneItemInTheConsequence()
+        {
+            //Given
+            var dataSet = DataSetBuilder.AnyDataSet()
+                .WithNominalAttribute
+                    (name: "first_attribute", values: new[] { "first0", "first1" })
+                .WithNominalAttribute
+                    (name: "second_attribute", values: new[] { "second0", "second1" })
+                .WithNominalAttribute
+                    (name: "third_attribute", values: new[] { "third0", "third1" })
+
+                .AddData(values: new[] { "first0", "second0", "third0" })
+                .AddData(values: new[] { "first0", "second1", "third0" })
+                .AddData(values: new[] { "first0", "second1", "third1" })
+                .AddData(values: new[] { "first0", "second1", "third1" })
+                .AddData(values: new[] { "first1", "second1", "third1" })
+                .AddData(values: new[] { "first1", "second1", "third1" })
+
+                .Build();
+
+            //When
+            var apriori = new Apriori(.3);
+
+            var actualRules = apriori.GenerateAllRulesWithOneItemInTheConsequence(new ItemSet(new int?[] { 0, 1, 0 }), dataSet);
+
+            Console.WriteLine(actualRules[0].ToString());
+            Console.WriteLine(actualRules[1].ToString());
+            Console.WriteLine(actualRules[2].ToString());
+
+            //Then
+            var expectedRules = new List<AssociationRule>
+                {
+                    new AssociationRule(premise:new ItemSet(new int?[]{null, 1, 0}), premiseCount:1, consequence:new ItemSet(new int?[]{0, null, null}), consequenceCount:4)
+                    , new AssociationRule(premise:new ItemSet(new int?[]{0, null, 0}), premiseCount:2, consequence:new ItemSet(new int?[]{null, 1, null}), consequenceCount:5)
+                    , new AssociationRule(premise:new ItemSet(new int?[]{0, 1, null}), premiseCount:3, consequence:new ItemSet(new int?[]{null, null, 0}), consequenceCount:2)
+                };
+
+            Assert.AreEqual(expectedRules, actualRules);
+        }
+
+        [Test]
+        public void CanFindLargeItemSets()
+        {
+            //Given
+            var dataSet = DataSetBuilder.AnyDataSet()
+                .WithNominalAttribute
+                    (name: "first_attribute", values: new[] { "first0", "first1" })
+                .WithNominalAttribute
+                    (name: "second_attribute", values: new[] { "second0", "second1" })
+
+                .AddData(values: new[] { "first0", "second0" })
+                .AddData(values: new[] { "first0", "second1" })
+                .AddData(values: new[] { "first0", "second1" })
+                .AddData(values: new[] { "first0", "second1" })
+                .AddData(values: new[] { "first1", "second1" })
+                .AddData(values: new[] { "first1", "second1" })
+
+                .Build();
+
+            //When
+            var apriori = new Apriori(1);
+
+            apriori.FindLargeItemSets(dataSet);
+        }
+
+        [Test]
         public void CanMergeSimilarItemsWithSizeLessThanLength()
         {
             //Given
@@ -109,7 +175,7 @@ namespace Weka.NET.Tests.Associations
 
             //When
             var apriori = new Apriori(1);
-            apriori.UpdateCounts(itemSets.Keys, dataSet);
+            apriori.UpdateCounts(dataSet, itemSets.Keys);
 
             //Then
             var actual = apriori.DeleteItemSets(itemSets.Keys.ToList(), 3);
@@ -153,7 +219,7 @@ namespace Weka.NET.Tests.Associations
 
             //When
             var apriori = new Apriori(1);
-            apriori.UpdateCounts(expectedCounts.Keys, dataSet);
+            apriori.UpdateCounts(dataSet, expectedCounts.Keys);
 
             //Then
             Assert.AreEqual(expectedCounts, apriori.ItemSetCounts);
