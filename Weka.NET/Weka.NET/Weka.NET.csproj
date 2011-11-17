@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Associations\AssociationRule.cs" />
     <Compile Include="Core\DataSetBuilder.cs" />
+    <Compile Include="Core\Parsers\ArffParser.cs" />
     <Compile Include="Utils\Arrays.cs" />
     <Compile Include="Associations\Apriori.cs" />
     <Compile Include="Associations\ItemSet.cs" />
@@ -56,7 +57,6 @@
     <Compile Include="Core\Instance.cs" />
     <Compile Include="Core\NominalAttribute.cs" />
     <Compile Include="Core\NumericAttribute.cs" />
-    <Compile Include="Core\Parsers\IArffParser.cs" />
     <Compile Include="CommandLine.cs" />
     <Compile Include="Core\StringAttribute.cs" />
     <Compile Include="Options.cs" />

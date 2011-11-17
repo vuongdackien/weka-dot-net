@@ -39,6 +39,14 @@ namespace Weka.NET.Associations
             itemSetCounts = new Dictionary<ItemSet, int>();
         }
 
+
+        public IList<AssociationRule> PruneRules(IList<AssociationRule> rulesToPrune, double minConfidence)
+        {
+            var prunedRules = from r in rulesToPrune where r.CalculateConfidence() >= minConfidence select r;
+
+            return prunedRules.ToList();
+        }
+
         public IList<ItemSet> BuildSingletons(IList<Weka.NET.Core.Attribute> attributes)
         {
             CodeContract.NotSupportedNumericAttributes(attributes);
@@ -103,7 +111,7 @@ namespace Weka.NET.Associations
 
         }
 
-        public void BuildAssociationRules(DataSet dataSet)
+        public IEnumerable<AssociationRule> BuildAssociationRules(DataSet dataSet)
         {
             FindLargeItemSets(dataSet);
 
@@ -115,6 +123,8 @@ namespace Weka.NET.Associations
             {
 
             }
+
+            return null;
         }
 
         public IList<ItemSet> PruneItemSets(IList<ItemSet> toPrune, IList<ItemSet> kMinusOne)

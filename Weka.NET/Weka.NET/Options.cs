@@ -5,7 +5,37 @@ using System.Text;
 
 namespace Weka.NET
 {
-    public class Options
+    struct OptionArgument
     {
+        public char ShortIdentifier;
+
+        public string Argument { set; get; }
+    }
+    
+    sealed class Options
+    {
+        readonly IDictionary<char, OptionArgument> options = new Dictionary<char, OptionArgument>();
+
+        public Options AddOption(char option, bool required)
+        {
+            return this;   
+        }
+
+        public bool ContainsOption(char option)
+        {
+            return false;
+        }
+
+        public string GetArgumentFor(char option)
+        {
+            return null;
+        }
+
+        public IDictionary<char, OptionArgument> ParseArguments(string[] args)
+        {
+            return null;
+        }
+
+
     }
 }

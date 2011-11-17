@@ -23,6 +23,11 @@ namespace Weka.NET.Associations
             ConsequenceCount = consequenceCount;
         }
 
+        public double CalculateConfidence()
+        {
+            return ItemSet.ConfidenceForRule(PremiseCount, ConsequenceCount);
+        }
+
         public override bool Equals(object obj)
         {
             if (obj is AssociationRule)
