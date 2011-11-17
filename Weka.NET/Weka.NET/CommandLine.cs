@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using Weka.NET.Associations;
 using Weka.NET.Core;
+using System.IO;
+using Weka.NET.Core.Parsers;
 
 namespace Weka.NET
 {

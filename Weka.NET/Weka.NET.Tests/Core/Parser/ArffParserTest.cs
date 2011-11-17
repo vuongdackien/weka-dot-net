@@ -44,22 +44,20 @@ namespace Weka.NET.Tests.Core.Parser
         [Test]
         public void CanParseRelationName()
         {
-            //Given
-            var stream = GivenStringStream("@relation somerelation");
+            ////Given
+            var dataSetFileContent = GivenStringStream("@relation somerelation");
 
             //When
-            parser.ParseRelationName(dataSetBuilder.Object, new StreamReader(stream) );
+            parser.ParseRelationName(dataSetBuilder.Object, new StreamReader(dataSetFileContent) );
 
             //Then
-            dataSetBuilder.Verify(builder => builder.WithRelationName("somerelation"));
+            dataSetBuilder.Verify(builder => builder.WithRelationName(It.IsAny<string>()));
         }
 
         private static MemoryStream GivenStringStream(string str)
         {
-            var stream = new MemoryStream();
-            byte[] data = Encoding.Unicode.GetBytes(str);
-            stream.Write(data, 0, data.Length);
-            return stream;
+            byte[] byteArray = Encoding.ASCII.GetBytes(str);
+            return new MemoryStream(byteArray);
         }
 
         private class TesteableArffParser : ArffParser

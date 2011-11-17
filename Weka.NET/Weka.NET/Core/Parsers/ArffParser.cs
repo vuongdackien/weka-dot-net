@@ -18,7 +18,7 @@ namespace Weka.NET.Core.Parsers
         
         string currentLine;
 
-        int currentLineNumber = -1;
+        int currentLineNumber = 0;
 
         public DataSet Parse(Stream stream)
         {
@@ -99,23 +99,40 @@ namespace Weka.NET.Core.Parsers
             } while (currentLine != null && currentLine.Trim().Length > 0 && currentLine.StartsWith("@attribute"));
         }
 
-        protected void ParseRelationName(IDataSetBuilder dataSetBuilder, StreamReader reader)
+        private void ReadLine(StreamReader reader)
         {
-            while ((currentLine = reader.ReadLine()).Trim().Length == 0);
-
-            var tokens = currentLine.Split();
-
-            if (tokens.Length != 2)
+            currentLine = reader.ReadLine();
+            if (currentLine != null)
             {
-                throw new ArgumentException("[Line " + currentLine + "] Expecting string with '@relation RELATION_NAME' format but found: " + currentLine);
+                currentLine = currentLine.Trim();
+            }
+            currentLineNumber++;
+        }
+
+        public void ParseRelationName(IDataSetBuilder dataSetBuilder, StreamReader reader)
+        {
+            ReadLine(reader);
+
+            while (currentLine != null && currentLine.Trim().Length == 0)
+            {
+                ReadLine(reader);
             }
 
-            if ("@relation".Equals(tokens[0]))
+            if (currentLine == null)
             {
-                throw new ArgumentException("[Line " + currentLine + "] Expecting string starting with '@relation ...' but found: " + currentLine);
+                throw new ArgumentException("Invalid Arff file - no @relation tag found");
             }
 
-            dataSetBuilder.WithRelationName(tokens[1]);
+            if (false == currentLine.StartsWith("@relation"))
+            {
+                Console.WriteLine("starts with: " + currentLine);
+
+                throw new ArgumentException("[Line " + currentLineNumber + "] Expecting string starting with '@relation ...' but found: " + currentLine);
+            }
+
+            var relationName = currentLine.Substring(10).Trim();
+
+            dataSetBuilder.WithRelationName(relationName);
         }
 
 
