@@ -38,7 +38,16 @@ namespace Weka.NET.Tests.Core.Parser
         [Test]
         public void CanParseNominalAttribute()
         {
+            ////Given
+            var relationString = GivenStringStream("@relation weather.symbolic");
+            var attributeString = GivenStringStream("@attribute outlook {sunny, overcast, rainy}");
 
+            //When
+            parser.ParseRelationName(dataSetBuilder.Object, new StreamReader(relationString));
+            parser.ParseAttributes(dataSetBuilder.Object, new StreamReader(attributeString));
+
+            //Then
+            dataSetBuilder.Verify(builder => builder.WithNominalAttribute("outlook", new string[] { "sunny", "overcast", "rainy" }));
         }
 
         [Test]
@@ -51,7 +60,7 @@ namespace Weka.NET.Tests.Core.Parser
             parser.ParseRelationName(dataSetBuilder.Object, new StreamReader(dataSetFileContent) );
 
             //Then
-            dataSetBuilder.Verify(builder => builder.WithRelationName(It.IsAny<string>()));
+            dataSetBuilder.Verify(builder => builder.WithRelationName("somerelation"));
         }
 
         private static MemoryStream GivenStringStream(string str)
@@ -65,6 +74,11 @@ namespace Weka.NET.Tests.Core.Parser
             public new void ParseRelationName(IDataSetBuilder builder, StreamReader reader)
             {
                 base.ParseRelationName(builder, reader);
+            }
+
+            public new void ParseAttributes(IDataSetBuilder builder, StreamReader reader)
+            {
+                base.ParseAttributes(builder, reader);
             }
         }
     }

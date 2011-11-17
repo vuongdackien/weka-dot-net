@@ -65,38 +65,33 @@ namespace Weka.NET.Core.Parsers
 
         protected void ParseAttributes(IDataSetBuilder dataSetBuilder, StreamReader reader)
         {
-            if (currentLine.Trim().Length == 0)
+            while (currentLine != null && currentLine.Trim().Length == 0)
             {
-                while ((currentLine = reader.ReadLine()).Trim().Length == 0) ;
+                ReadLine(reader);
+            }
+
+            Console.WriteLine("currentLine: " + currentLine);
+
+            if (false == currentLine.StartsWith("@attribute"))
+            {
+                throw new ArgumentException("[Line " + currentLineNumber + "] Expecting line to start with '@attribute ...' found: " + currentLine);
             }
 
             do
             {
-                if (Regex.IsMatch(currentLine, NominalAttributePattern))
-                {
-                    int bracketOpen = currentLine.IndexOf('{');
+                int bracketOpen = currentLine.IndexOf('{');
 
-                    int bracketClose = currentLine.IndexOf('}');
+                int bracketClose = currentLine.IndexOf('}');
 
-                    var attributeNameTokens = currentLine.Substring(0, bracketOpen).Split();
+                var name = currentLine.Substring(10, bracketOpen);
 
-                    var attributeName = attributeNameTokens[1];
+                var values = currentLine.Substring(bracketOpen, bracketClose);
 
-                    var pattern = @"\{(\w+,)*\w+\}";
+                dataSetBuilder.WithNominalAttribute(name, values.Split(','));
 
-                    var matches = Regex.Matches(currentLine.Substring(bracketOpen, bracketClose), pattern, RegexOptions.ExplicitCapture);
-
-                    var nominalValues = new List<string>();
-
-                    foreach(Match match in matches)
-                    {
-                        nominalValues.Add(match.Value);
-                    }
-                }
-
-                currentLine = reader.ReadLine();
-
-            } while (currentLine != null && currentLine.Trim().Length > 0 && currentLine.StartsWith("@attribute"));
+                ReadLine(reader);
+            }
+            while (currentLine.StartsWith("@attribute"));
         }
 
         private void ReadLine(StreamReader reader)
