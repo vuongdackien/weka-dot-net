@@ -21,16 +21,6 @@ namespace Weka.NET
             return this;   
         }
 
-        public bool ContainsOption(char option)
-        {
-            return false;
-        }
-
-        public string GetArgumentFor(char option)
-        {
-            return null;
-        }
-
         public IDictionary<char, OptionArgument> ParseArguments(string[] args)
         {
             return null;

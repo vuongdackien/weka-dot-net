@@ -35,7 +35,7 @@ namespace Weka.NET.Core.Parsers
             return dataSetBuilder.Build();        
         }
 
-        protected void ParseInstances(DataSetBuilder dataSetBuilder, StreamReader reader)
+        protected void ParseInstances(IDataSetBuilder dataSetBuilder, StreamReader reader)
         {
             if (currentLine.Trim().Length == 0)
             {
@@ -63,7 +63,7 @@ namespace Weka.NET.Core.Parsers
 
         }
 
-        protected void ParseAttributes(DataSetBuilder dataSetBuilder, StreamReader reader)
+        protected void ParseAttributes(IDataSetBuilder dataSetBuilder, StreamReader reader)
         {
             if (currentLine.Trim().Length == 0)
             {
@@ -99,7 +99,7 @@ namespace Weka.NET.Core.Parsers
             } while (currentLine != null && currentLine.Trim().Length > 0 && currentLine.StartsWith("@attribute"));
         }
 
-        protected void ParseRelationName(DataSetBuilder dataSetBuilder, StreamReader reader)
+        protected void ParseRelationName(IDataSetBuilder dataSetBuilder, StreamReader reader)
         {
             while ((currentLine = reader.ReadLine()).Trim().Length == 0);
 

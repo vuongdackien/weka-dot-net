@@ -6,7 +6,20 @@ using Weka.NET.Core;
 
 namespace Weka.NET.Core
 {
-    public class DataSetBuilder
+    public interface IDataSetBuilder
+    {
+        IDataSetBuilder WithRelationName(string name);
+
+        IDataSetBuilder WithNumericAttribute(string name);
+
+        IDataSetBuilder WithNominalAttribute(string name, string[] values);
+
+        IDataSetBuilder AddData(string[] values);
+
+        DataSet Build();
+    }
+
+    public class DataSetBuilder : IDataSetBuilder
     {
         public static DataSetBuilder AnyDataSet()
         {
@@ -19,28 +32,28 @@ namespace Weka.NET.Core
 
         IList<Instance> instances = new List<Instance>();
 
-        public DataSetBuilder WithRelationName(string name)
+        public IDataSetBuilder WithRelationName(string name)
         {
             relationName = name;
 
             return this;
         }
 
-        public DataSetBuilder WithNumericAttribute(string name)
+        public IDataSetBuilder WithNumericAttribute(string name)
         {
             attributes.Add(new NumericAttribute(name: name, index:attributes.Count));
 
             return this;
         }
 
-        public DataSetBuilder WithNominalAttribute(string name, string[] values)
+        public IDataSetBuilder WithNominalAttribute(string name, string[] values)
         {
             attributes.Add( new NominalAttribute(name, attributes.Count, values) );
 
             return this;
         }
 
-        public DataSetBuilder AddData(string[] values)
+        public IDataSetBuilder AddData(string[] values)
         {
             var encoded = new double?[values.Length];
 
