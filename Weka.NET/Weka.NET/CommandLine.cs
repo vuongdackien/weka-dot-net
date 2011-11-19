@@ -21,6 +21,10 @@ namespace Weka.NET
 
         static void Main(string[] args)
         {
+            var apriori = new Apriori(.7);
+
+            var rules = apriori.BuildAssociationRules(Weka.NET.Utils.TestSets.WeatherNominal());
+
             var optionArgs = options.ParseArguments(args);
 
             if (false == optionArgs.ContainsKey('t'))

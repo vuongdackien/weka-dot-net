@@ -241,6 +241,31 @@ namespace Weka.NET.Tests.Associations
         }
 
         [Test]
+        public void UpdatedCountWontCountItemSetsTwice()
+        {
+            //Given
+            var dataSet = DataSetBuilder.AnyDataSet()
+                .WithNominalAttribute
+                    (name: "first_attribute", values: new[] { "first0"  })
+
+                .AddData(values: new[] { "first0" })
+
+                .Build();
+
+            //When
+            var apriori = new Apriori(1);
+
+            apriori.UpdateCounts(dataSet, new ItemSet(new int?[]{0}));
+            
+            apriori.UpdateCounts(dataSet, new ItemSet(new int?[]{0}));
+
+            //Then
+            var expectedCounts = new Dictionary<ItemSet, int>();
+
+            expectedCounts[new ItemSet(new int?[] { 0})] = 1;        
+        }
+
+        [Test]
         [ExpectedException(typeof(ArgumentException))]
         public void CannotBuildSingletonsForNumericAttributes()
         {

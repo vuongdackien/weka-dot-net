@@ -16,22 +16,35 @@ namespace Weka.NET.Associations
         public int MaxRulesCount { set; get; }
 
         /// <summary>
+        /// Significance level for optional significance test.
+        /// </summary>
+        public double SignificanceLevel { get { return -1d; } }
+
+        /// <summary>
         /// The minimum support
         /// </summary>
         const double DefaultMinSupport = 1d;
         
         public double MinSupport { private set; get; }
 
+        /** The minimum confidence. */
+        const double DefaultMinConfidence = 0.9d;
+
+        public double MinConfidence;
+
         /// <summary>
         /// Lower bound min support
         /// </summary>
-        const double DefaultLowerBoundMinSupport = 1d;
+        const double DefaultLowerBoundMinSupport = .1;
 
         public double LowerBoundMinSupport { private set; get; }
 
-        public IList<AssociationRule> AllRules { get; private set; }
+        /** Delta by which m_minSupport is decreased in each iteration. */
+        const double DefaultDelta = .05;
 
-        public double? SignificanceLevel { set; get; }
+        public double Delta { set; get; }
+
+        public List<AssociationRule> AllRules { get; private set; }
 
         /// <summary>
         /// ItemSet counts
@@ -46,7 +59,7 @@ namespace Weka.NET.Associations
         public int Cycles { set; get; }
 
         /** The set of all sets of itemsets L. */
-        readonly IList<IList<ItemSet>> itemSets = new List<IList<ItemSet>>();
+        readonly IList<IList<ItemSet>> allItemSets = new List<IList<ItemSet>>();
 
         public Apriori(double minSupport)
         {
@@ -55,6 +68,7 @@ namespace Weka.NET.Associations
             MinSupport = minSupport;
             itemSetCounts = new Dictionary<ItemSet, int>();
             LowerBoundMinSupport = DefaultLowerBoundMinSupport;
+            Delta = DefaultDelta;
         }
 
 
@@ -109,7 +123,7 @@ namespace Weka.NET.Associations
 
             do
             {
-                itemSets.Add(kSets);
+                allItemSets.Add(kSets);
 
                 var kMinusOneSets = new List<ItemSet>(kSets);
                 
@@ -136,23 +150,40 @@ namespace Weka.NET.Associations
                 throw new ArgumentException("Can't handle string attributes!");
             }
 
+            int cycles = 0;
+
             do
             {
+                FindLargeItemSets(dataSet);
+
+                if (SignificanceLevel != -1)
+                {
+                }
+                else
+                {
+                    FindRulesQuickly();
+                }
+
+                SortRulesAccordingToTheirSupport();
+
+                SortRulesAccordingToTheirConfidence();
+
+                MinSupport -= Delta;
+
+                cycles++;
+   
             } while (AllRules.Count < MaxRulesCount && MinSupport.GreaterOrEqualsTo(LowerBoundMinSupport));
 
-
-            FindLargeItemSets(dataSet);
-
-            if (SignificanceLevel.HasValue)
-            {
-                FindRulesQuickly();
-            }
-            else
-            {
-
-            }
-
             return null;
+        }
+
+        private void SortRulesAccordingToTheirConfidence()
+        {
+        }
+
+        private void SortRulesAccordingToTheirSupport()
+        {
+
         }
 
         public IList<ItemSet> PruneItemSets(IList<ItemSet> toPrune, IList<ItemSet> kMinusOne)
@@ -274,6 +305,11 @@ namespace Weka.NET.Associations
 
             foreach (var itemSet in itemSets)
             {
+                if (itemSetCounts.ContainsKey(itemSet))
+                {
+                    continue; //already count
+                }
+
                 foreach (var instance in dataSet.Instances)
                 {
                     if (itemSet.ContainedBy(instance))
@@ -344,7 +380,7 @@ namespace Weka.NET.Associations
 
 
 
-        public IList<object> GenerateRules(double minConfidence, IList<ItemSet> itemSets, int itemSetSize)
+        public IList<AssociationRule> GenerateRules(double minConfidence, IList<ItemSet> itemSets, int itemSetSize)
         {
             var premises = new List<int?>();
 
@@ -356,83 +392,18 @@ namespace Weka.NET.Associations
             return null;
         }
 
-        /*
- 	public final FastVector[] generateRules(double minConfidence,
-			FastVector hashtables, int numItemsInSet) {
-
-		FastVector premises = new FastVector(), consequences = new FastVector(), conf = new FastVector();
-		FastVector[] rules = new FastVector[3], moreResults;
-		ItemSet premise, consequence;
-		Hashtable hashtable = (Hashtable) hashtables
-				.elementAt(numItemsInSet - 2);
-
-		// Generate all rules with one item in the consequence.
-		for (int i = 0; i < m_items.length; i++)
-			if (m_items[i] != -1) {
-				premise = new ItemSet();
-				consequence = new ItemSet();
-				premise.m_items = new int[m_items.length];
-				consequence.m_items = new int[m_items.length];
-				consequence.m_counter = m_counter;
-				for (int j = 0; j < m_items.length; j++)
-					consequence.m_items[j] = -1;
-				System.arraycopy(m_items, 0, premise.m_items, 0, m_items.length);
-				premise.m_items[i] = -1;
-				consequence.m_items[i] = m_items[i];
-				premise.m_counter = ((Integer) hashtable.get(premise))
-						.intValue();
-				premises.addElement(premise);
-				consequences.addElement(consequence);
-				conf.addElement(new Double(confidenceForRule(premise,
-						consequence)));
-			}
-		rules[0] = premises;
-		rules[1] = consequences;
-		rules[2] = conf;
-		pruneRules(rules, minConfidence);
-
-		// Generate all the other rules
-		moreResults = moreComplexRules(rules, numItemsInSet, 1, minConfidence,
-				hashtables);
-		if (moreResults != null)
-			for (int i = 0; i < moreResults[0].size(); i++) {
-				rules[0].addElement(moreResults[0].elementAt(i));
-				rules[1].addElement(moreResults[1].elementAt(i));
-				rules[2].addElement(moreResults[2].elementAt(i));
-			}
-		return rules;
-	}
-         */
-
         protected void FindRulesQuickly()
         {
-            foreach (var itemSet in itemSets)
+            for (int j=0;j<allItemSets.Count;j++)
             {
-
-            }
-
-            /*
-             FastVector[] rules;
-
-            // Build rules
-            for (int j = 1; j < m_Ls.size(); j++)
-            {
-                FastVector currentItemSets = (FastVector)m_Ls.elementAt(j);
-                Enumeration eItemSets = currentItemSets.elements();
-                while (eItemSets.hasMoreElements())
+                foreach (IList<ItemSet> itemSets in allItemSets[j])
                 {
-                    ItemSet currentItemSet = (ItemSet)eItemSets.nextElement();
-                    rules = currentItemSet.generateRules(m_minConfidence,
-                            m_hashtables, j + 1);
-                    for (int k = 0; k < rules[0].size(); k++)
-                    {
-                        m_allTheRules[0].addElement(rules[0].elementAt(k));
-                        m_allTheRules[1].addElement(rules[1].elementAt(k));
-                        m_allTheRules[2].addElement(rules[2].elementAt(k));
-                    }
+                    var rules = GenerateRules(MinConfidence, itemSets, j + 1);
+
+                    AllRules.AddRange(rules);
                 }
             }
-            */
+
         }
     }
 
