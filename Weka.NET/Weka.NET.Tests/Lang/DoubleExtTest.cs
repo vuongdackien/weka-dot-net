@@ -7,23 +7,27 @@ namespace Weka.NET.Tests.Lang
     public class DoubleExtTest
     {
         [Test]
-        public void GreaterOrEqualsTo_SimpleDiff()
+        public void GreaterOrEqualsTo_TestingSimpleDifferences()
         {
             var a = .0004;
-
             var b = .0002;
 
             Assert.IsTrue(a.GreaterOrEqualsTo(b));
+
+            var c = .0002;
+            var d = .0004;
+
+            Assert.IsFalse(c.GreaterOrEqualsTo(d));
         }
 
         [Test]
-        public void CheckingGreaterOrEqualsTo()
+        public void CheckingGreaterOrEqualsTo_CanDifferentiateIfValuesAreLessThanSmallConstant()
         {
-            var a = .0002;
+            var a = .00000001;
+            var b = .00000002;
 
-            var b = .0004;
-
-            Assert.IsFalse(a.GreaterOrEqualsTo(b));
+            Assert.IsTrue(a.GreaterOrEqualsTo(b));
+            Assert.IsTrue(b.GreaterOrEqualsTo(a));
         }
     }
 }
