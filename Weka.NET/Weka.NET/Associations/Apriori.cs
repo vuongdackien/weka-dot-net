@@ -289,7 +289,7 @@ namespace Weka.NET.Associations
 
         public IList<ItemSet> DeleteItemSets(IList<ItemSet> itemSets, int minSupport)
         {
-            var newItemSets = (from itemSet in ItemSetCounts where itemSet.Value >= minSupport select itemSet.Key).ToList();
+            var newItemSets = (from itemSet in itemSets where itemSetCounts[itemSet] >= minSupport select itemSet).ToList();
 
             return newItemSets;
         }
@@ -380,7 +380,7 @@ namespace Weka.NET.Associations
 
 
 
-        public IList<AssociationRule> GenerateRules(double minConfidence, IList<ItemSet> itemSets, int itemSetSize)
+        public IList<AssociationRule> GenerateRules(double minConfidence, ItemSet itemSet, int itemSetSize)
         {
             var premises = new List<int?>();
 
@@ -396,11 +396,13 @@ namespace Weka.NET.Associations
         {
             for (int j=0;j<allItemSets.Count;j++)
             {
-                foreach (IList<ItemSet> itemSets in allItemSets[j])
+                foreach (ItemSet itemSets in allItemSets[j])
                 {
                     var rules = GenerateRules(MinConfidence, itemSets, j + 1);
 
-                    AllRules.AddRange(rules);
+                  //  var rules = GenerateRules(MinConfidence, itemSets, j + 1);
+
+                   // AllRules.AddRange(rules);
                 }
             }
 
