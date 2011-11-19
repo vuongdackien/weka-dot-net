@@ -13,6 +13,21 @@ namespace Weka.NET.Tests.Associations
     public class AprioriTest
     {
         [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void CannotAcceptStringAttribute()
+        {
+            //Given
+            var dataSet = DataSetBuilder.AnyDataSet()
+                .WithStringAttribute(name: "string_attribute")
+                .Build();
+
+            //When
+            new Apriori(.3).BuildAssociationRules(dataSet);
+
+            //Then Expect ArgumentException
+        }
+
+        [Test]
         public void CanGenerateAllRulesWithOneItemInTheConsequence()
         {
             //Given

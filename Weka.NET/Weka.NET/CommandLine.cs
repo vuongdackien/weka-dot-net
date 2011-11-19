@@ -16,6 +16,7 @@ namespace Weka.NET
         static CommandLine()
         {
             options = new Options();
+            options.AddOption('t', true);
         }
 
         static void Main(string[] args)
@@ -29,7 +30,11 @@ namespace Weka.NET
 
             var dataSet = ParseDataSet(optionArgs['t'].Argument);
 
-            var apriori = new Apriori(.3);
+            var d = from i in dataSet.Instances select i.ToString();
+
+
+
+           /* var apriori = new Apriori(.3);
 
             var rules = apriori.BuildAssociationRules(dataSet);
 
@@ -37,12 +42,15 @@ namespace Weka.NET
             foreach (var rule in rules)
             {
                 Console.WriteLine(rule.ToString());
-            }
+            }*/
         }
 
         public static DataSet ParseDataSet(string fileName)
         {
-            return null;
+            using (var stream = File.OpenRead(fileName))
+            {
+                return new ArffParser().Parse(stream);
+            }
         }
     }
 }

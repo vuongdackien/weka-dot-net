@@ -34,7 +34,19 @@ namespace Weka.NET.Core
 
         public IDataSetBuilder WithRelationName(string name)
         {
-            relationName = name;
+            if (name == null || name.Trim().Length == 0)
+            {
+                throw new ArgumentException("name is null or empty");
+            }
+
+            relationName = name.Trim();
+
+            return this;
+        }
+
+        public IDataSetBuilder WithStringAttribute(string name)
+        {
+            attributes.Add(new StringAttribute(name: name, index: attributes.Count));
 
             return this;
         }
@@ -48,7 +60,19 @@ namespace Weka.NET.Core
 
         public IDataSetBuilder WithNominalAttribute(string name, string[] values)
         {
-            attributes.Add( new NominalAttribute(name, attributes.Count, values) );
+            if (name == null || name.Trim().Length == 0)
+            {
+                throw new ArgumentException("name is null or empty");
+            }
+
+            if (values == null || values.Length == 0)
+            {
+                throw new ArgumentException("values is null or empty");
+            }
+
+            var trimmedValues = (from v in values select v.Trim()).ToArray();
+
+            attributes.Add( new NominalAttribute(name.Trim(), attributes.Count, trimmedValues) );
 
             return this;
         }
@@ -71,6 +95,8 @@ namespace Weka.NET.Core
         {
             return new DataSet(name:relationName, attributes: attributes, instances: instances);
         }
+
+
 
 
     }

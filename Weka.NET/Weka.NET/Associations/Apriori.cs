@@ -113,6 +113,11 @@ namespace Weka.NET.Associations
 
         public IEnumerable<AssociationRule> BuildAssociationRules(DataSet dataSet)
         {
+            if (dataSet.ContainsStringAttribute())
+            {
+                throw new ArgumentException("Can't handle string attributes!");
+            }
+
             FindLargeItemSets(dataSet);
 
             if (SignificanceLevel.HasValue)

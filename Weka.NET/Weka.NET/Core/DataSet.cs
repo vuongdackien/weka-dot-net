@@ -62,5 +62,10 @@ namespace Weka.NET.Core
         }
 
 
+
+        public bool ContainsStringAttribute()
+        {
+            return Attributes.Any(a => a is StringAttribute);
+        }
     }
 }
