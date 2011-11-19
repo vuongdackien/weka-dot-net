@@ -380,17 +380,21 @@ namespace Weka.NET.Associations
 
 
 
-        public IList<AssociationRule> GenerateRules(double minConfidence, ItemSet itemSet, int itemSetSize)
+        public IList<AssociationRule> GenerateRules(DataSet dataSet, ItemSet itemSet, int itemSetSize)
         {
             var premises = new List<int?>();
 
             var consequences = new List<int?>();
 
             // Generate all rules with one item in the consequence.
+            var rulesWitOneConsequence = GenerateAllRulesWithOneItemInTheConsequence(itemSet, dataSet);
 
+            // Generate all the other rules
+           // var allOtherRules = GenerateRulesWIthConsequenceGreaterThanOne(rulesWitOneConsequence, dataSet);
 
             return null;
         }
+
 
         protected void FindRulesQuickly()
         {
@@ -398,7 +402,7 @@ namespace Weka.NET.Associations
             {
                 foreach (ItemSet itemSets in allItemSets[j])
                 {
-                    var rules = GenerateRules(MinConfidence, itemSets, j + 1);
+                   // var rules = GenerateRules(dataSet, itemSets, j + 1);
 
                   //  var rules = GenerateRules(MinConfidence, itemSets, j + 1);
 
