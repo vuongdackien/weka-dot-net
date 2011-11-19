@@ -4,13 +4,33 @@ using System.Linq;
 using System.Text;
 using Weka.NET.Core;
 using System.Diagnostics.Contracts;
-
+using Weka.NET.Lang;
 
 namespace Weka.NET.Associations
 {
     [Serializable]
     public class Apriori
     {
+        const int DefaultMaxRulesCount = 10;
+
+        public int MaxRulesCount { set; get; }
+
+        /// <summary>
+        /// The minimum support
+        /// </summary>
+        const double DefaultMinSupport = 1d;
+        
+        public double MinSupport { private set; get; }
+
+        /// <summary>
+        /// Lower bound min support
+        /// </summary>
+        const double DefaultLowerBoundMinSupport = 1d;
+
+        public double LowerBoundMinSupport { private set; get; }
+
+        public IList<AssociationRule> AllRules { get; private set; }
+
         public double? SignificanceLevel { set; get; }
 
         /// <summary>
@@ -22,11 +42,6 @@ namespace Weka.NET.Associations
         {
             get { return new Dictionary<ItemSet, int>(itemSetCounts); }
         }
-
-        /// <summary>
-        /// The minimum support
-        /// </summary>
-        public double MinSupport { private set; get; }
         
         public int Cycles { set; get; }
 
@@ -35,8 +50,11 @@ namespace Weka.NET.Associations
 
         public Apriori(double minSupport)
         {
+            MaxRulesCount = DefaultMaxRulesCount;
+            AllRules = new List<AssociationRule>();
             MinSupport = minSupport;
             itemSetCounts = new Dictionary<ItemSet, int>();
+            LowerBoundMinSupport = DefaultLowerBoundMinSupport;
         }
 
 
@@ -117,6 +135,11 @@ namespace Weka.NET.Associations
             {
                 throw new ArgumentException("Can't handle string attributes!");
             }
+
+            do
+            {
+            } while (AllRules.Count < MaxRulesCount && MinSupport.GreaterOrEqualsTo(LowerBoundMinSupport));
+
 
             FindLargeItemSets(dataSet);
 
