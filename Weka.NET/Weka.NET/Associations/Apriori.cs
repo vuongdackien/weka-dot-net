@@ -161,7 +161,7 @@ namespace Weka.NET.Associations
                 }
                 else
                 {
-                    FindRulesQuickly();
+                    FindRulesQuickly(dataSet);
                 }
 
                 SortRulesAccordingToTheirSupport();
@@ -396,20 +396,72 @@ namespace Weka.NET.Associations
         }
 
 
-        protected void FindRulesQuickly()
+        protected IList<AssociationRule> FindRulesQuickly(DataSet dataSet)
         {
+            var rules = new List<AssociationRule>();
+
             for (int j=0;j<allItemSets.Count;j++)
             {
-                foreach (ItemSet itemSets in allItemSets[j])
+                foreach (var itemSet in allItemSets[j])
                 {
-                   // var rules = GenerateRules(dataSet, itemSets, j + 1);
-
-                  //  var rules = GenerateRules(MinConfidence, itemSets, j + 1);
-
-                   // AllRules.AddRange(rules);
+                    rules.AddRange( GenerateRules(dataSet, j+1) );
                 }
             }
 
+            return rules;
+
+        }
+
+        private IList<AssociationRule> GenerateRules(DataSet dataSet, int numItemsInSet)
+        {
+            var rules = new List<AssociationRule>();
+
+            var rulesWitOneConsequence = GenerateAllRulesWithOneItemInTheConsequence(dataSet, numItemsInSet);
+
+            PruneRules(rulesWitOneConsequence);
+
+            var moreComplexRules = GenerateMoreComplexRules(dataSet, rulesWitOneConsequence, 1);
+
+
+
+            return rules;
+        }
+
+        private IList<AssociationRule> GenerateMoreComplexRules(DataSet dataSet, object rulesWitOneConsequence, int p)
+        {
+            int numItemsInSet=0;
+            int numItemsInConsequence=0;
+
+            if (numItemsInSet > numItemsInConsequence + 1)
+            {
+                var newConsequences = new int[]{0}; // MergeAllItemSets(rules[1], numItemsInConsequence - 1);
+
+                foreach (var newConsequence in newConsequences)
+                {
+                    //newPremise = subtract(current);
+                    
+                    //newPremises.addElement(newPremise);
+
+                    //moreResults = moreComplexRules(result, numItemsInSet, numItemsInConsequence + 1, minConfidence, hashtables);
+
+                    //if (moreResults.Count == 0)
+                    //{
+                      //  return;
+                    //}
+                }
+            }
+
+            throw new NotImplementedException();
+        }
+
+        private IList<AssociationRule> GenerateAllRulesWithOneItemInTheConsequence(DataSet dataSet, int numItemsInSet)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void PruneRules(IList<AssociationRule> rulesWitOneConsequence)
+        {
+            throw new NotImplementedException();
         }
     }
 
