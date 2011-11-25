@@ -12,7 +12,7 @@ namespace Weka.NET.Tests.Associations
         [Ignore]
         public void ExtractingRulesFromWeatherNominal()
         {
-            var apriori = new Apriori(.2);
+            var apriori = new Apriori2(.2);
 
             var rules = apriori.BuildAssociationRules(TestSets.WeatherNominal());
         }

@@ -51,8 +51,9 @@
   <ItemGroup>
     <Compile Include="Associations\AprioriScenarioTest.cs" />
     <Compile Include="Associations\AprioriTest.cs" />
+    <Compile Include="Associations\AprioriTest2.cs" />
+    <Compile Include="Associations\ItemSetBuilderTest.cs" />
     <Compile Include="Associations\ItemSetTest.cs" />
-    <Compile Include="Core\DataSetTestBuilder.cs" />
     <Compile Include="Core\Parser\ArffParserTest.cs" />
     <Compile Include="Lang\DoubleExtTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

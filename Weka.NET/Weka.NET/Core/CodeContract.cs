@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Weka.NET.Core
 {
@@ -13,7 +12,14 @@ namespace Weka.NET.Core
             {
                 throw new ArgumentException("Can't handle numeric attributes");
             }
+        }
 
+        internal static void NotSupportedStringAttributes(IList<Attribute> attributes)
+        {
+            if (attributes.Any(attribute => attribute is StringAttribute))
+            {
+                throw new ArgumentException("Can't handle string attributes");
+            }
         }
     }
 }

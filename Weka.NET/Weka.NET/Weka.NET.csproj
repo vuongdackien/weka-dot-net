@@ -43,12 +43,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Associations\Apriori.cs" />
     <Compile Include="Associations\AssociationRule.cs" />
+    <Compile Include="Associations\ItemSetBuilder.cs" />
+    <Compile Include="Associations\ItemSets.cs" />
     <Compile Include="Core\DataSetBuilder.cs" />
     <Compile Include="Core\Parsers\ArffParser.cs" />
     <Compile Include="Lang\DoubleExt.cs" />
     <Compile Include="Utils\Arrays.cs" />
-    <Compile Include="Associations\Apriori.cs" />
+    <Compile Include="Associations\Apriori2.cs" />
     <Compile Include="Associations\ItemSet.cs" />
     <Compile Include="Classifiers\IClassifier.cs" />
     <Compile Include="Classifiers\OneRuleClassifier.cs" />
@@ -63,6 +66,7 @@
     <Compile Include="Options.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\CodeContract.cs" />
+    <Compile Include="Utils\Collections.cs" />
     <Compile Include="Utils\TestSets.cs" />
   </ItemGroup>
   <ItemGroup />

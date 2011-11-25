@@ -17,7 +17,7 @@ namespace Weka.NET.Tests.Associations
         {
             var someInstance = new Instance(values: new List<double?> { 1d, 2d, 3d });
 
-            var someItemSet = new ItemSet(items: new List<int?> { null, 2, 3 });
+            var someItemSet = new ItemSet(items: new List<double?> { null, 2, 3 });
 
             Assert.IsTrue(someItemSet.ContainedBy(someInstance));
         }
@@ -27,9 +27,46 @@ namespace Weka.NET.Tests.Associations
         {
             var someInstance = new Instance(values: new List<double?> { 1d, 2d });
 
-            var someItemSet = new ItemSet(items: new List<int?> { null, 5 });
+            var someItemSet = new ItemSet(items: new List<double?> { null, 5 });
 
             Assert.IsFalse(someItemSet.ContainedBy(someInstance));
+        }
+
+        [Test]
+        public void ItemSetImplementsEquatable()
+        {
+            var someItemSet = new ItemSet(items: new List<double?> { null, 5 });
+
+            var anotherItemSet = new ItemSet(items: new List<double?> { null, 5 });
+
+            Assert.IsTrue(someItemSet.Equals(anotherItemSet));
+        }
+
+        [Test]
+        public void ComparingItemSetsWithEqualsOperator()
+        {
+            var actual = new HashSet<ItemSet>();
+
+            var someItemSet = new ItemSet(items: new List<double?> { null, 5 });
+
+            actual.Add(someItemSet);
+
+            var anotherItemSet = new ItemSet(items: new List<double?> { null, 5 });
+
+            actual.Add(anotherItemSet);
+
+            var expected = new HashSet<ItemSet>();
+
+            expected.Add(anotherItemSet);
+
+            Console.WriteLine("Actual:");
+
+            foreach (var i in actual)
+            {
+                Console.WriteLine(i.ToString());
+            }
+
+            Assert.AreEqual(expected, actual);
         }
 
         [Test]
@@ -42,5 +79,7 @@ namespace Weka.NET.Tests.Associations
 
             Assert.AreEqual((double)premiseCount / (double)consequenceCount, actual, 0d);
         }
+
+
     }
 }

@@ -6,9 +6,11 @@ using Weka.NET.Associations;
 using Weka.NET.Core;
 using System.IO;
 using Weka.NET.Core.Parsers;
+using Weka.NET.Utils;
 
 namespace Weka.NET
 {
+
     public static class CommandLine
     {
         static Options options;
@@ -19,11 +21,37 @@ namespace Weka.NET
             options.AddOption('t', true);
         }
 
+
         static void Main(string[] args)
         {
-            var apriori = new Apriori(.7);
+            //Given
+            var dataSet = TestSets.WeatherNominal();
 
-            var rules = apriori.BuildAssociationRules(Weka.NET.Utils.TestSets.WeatherNominal());
+            //And
+            var builder = new ItemSetBuilder(0.1);
+
+            var singletons = builder.BuildSingletons(dataSet.Attributes);
+
+            var stuff = new ItemSetBuilder.ItemSetBuilderStuff(dataSet, 6);
+
+            stuff.AddAll(singletons);
+
+            //When
+            builder.FindSets(1, stuff);
+
+            Console.WriteLine(stuff.ItemSets);
+        }
+
+
+        static void Main2(string[] args)
+        {
+ 
+
+
+
+          //  var apriori = new Apriori { MinSupport = 1, Delta = .05 };
+
+          //  var rules = apriori.BuildAssociationRules(Weka.NET.Utils.TestSets.WeatherNominal(), 10);
 
             var optionArgs = options.ParseArguments(args);
 

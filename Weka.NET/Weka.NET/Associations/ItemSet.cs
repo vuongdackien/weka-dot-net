@@ -7,38 +7,103 @@ using System.Runtime.CompilerServices;
 
 namespace Weka.NET.Associations
 {
+    public class ItemSetComparer<ItemSet> : IEqualityComparer<ItemSet>
+    {
+        public bool Equals(ItemSet left, ItemSet right)
+        {
+            return left.Equals(right);
+        }
+
+        public int GetHashCode(ItemSet itemSet)
+        {
+            return itemSet.GetHashCode();
+        }
+    }
+
     /// <summary>
     /// Fill description...
     /// <remarks="This is the C# port for ItemSet.java originally developed by Eibe Frank"/>
     /// </summary>
-    public class ItemSet
+    public class ItemSet : IEquatable<ItemSet>
     {
-        public IList<int?> Items { private set; get; }
+        private List<ItemSet> combineds;
 
-        public int? this[int index]
+        public int Size { get; private set; }
+
+        public IList<double?> Items { private set; get; }
+
+        public double? this[int index]
         {
             get { return Items[index]; }
         }
 
-        public ItemSet(IEnumerable<int?> items) 
+        public ItemSet(IEnumerable<double?> items) 
         {
             Items = items.ToList().AsReadOnly();
+
+            foreach (var item in Items)
+            {
+                if (item.HasValue)
+                {
+                    Size++;
+                }
+            }
+        }
+
+        public bool Equals(ItemSet other)
+        {
+            var otherItemSet = other as ItemSet;
+
+            if (Items.Count() != otherItemSet.Items.Count())
+            {
+                return false;
+            }
+
+            for (int i = 0; i < Items.Count; i++)
+            {
+                if (Items[i].HasValue)
+                {
+                    if (otherItemSet.Items[i].HasValue)
+                    {
+                        if (Items[i].Value.Equals(otherItemSet.Items[i].Value))
+                        {
+                            continue;
+                        }
+                    }
+                    return false;
+                }
+
+                if (otherItemSet.Items[i].HasValue)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public override bool Equals(object other)
         {
             if (other is ItemSet)
             {
-                var otherItemSet = other as ItemSet;
-
-                return Enumerable.SequenceEqual(Items, otherItemSet.Items);
+                return Equals(other as ItemSet);
             }
             return false;
         }
 
         public override int GetHashCode()
         {
-            return 13 * RuntimeHelpers.GetHashCode(Items);
+            int hash = 1;
+
+            for (int i = 0; i < Items.Count; i++)
+            {
+                if (Items[i].HasValue)
+                {
+                    hash *= Items[i].Value.GetHashCode();
+                }
+            }
+
+            return 13 * hash;
         }
 
         public static double ConfidenceForRule(int premiseCount, int consequenceCount)
