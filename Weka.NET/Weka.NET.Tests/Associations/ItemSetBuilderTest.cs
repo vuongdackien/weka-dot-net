@@ -9,6 +9,35 @@ using Weka.NET.Utils;
 namespace Weka.NET.Tests.Associations
 {
     [TestFixture]
+    public class ItemSetSupportsTest
+    {
+        [Test]
+        public void CanCountItemSetSupport()
+        {
+            //Given
+            var dataSet = DataSetBuilder.AnyDataSet()
+                .WithNominalAttribute
+                    (name: "first_attribute", values: new[] { "first0", "first1" })
+                .WithNominalAttribute
+                    (name: "second_attribute", values: new[] { "second0", "second1" })
+
+                .AddData(new[] { "first0", "second0" })
+                .AddData(new[] { "first0", "second0" })
+                .AddData(new[] { "first0", "second0" })
+
+                .Build();
+
+            //When
+            var supports = new ItemSetSupports(dataSet);
+
+            supports.AddItemSets(new[] { new ItemSet(new double?[] { null, 0d }) });
+
+            //Then
+            Assert.AreEqual(3, supports[new ItemSet(new double?[] { null, 0d })]);
+        }
+    }
+
+    [TestFixture]
     public class ItemSetBuilderStuffTest
     {
         [Test]
