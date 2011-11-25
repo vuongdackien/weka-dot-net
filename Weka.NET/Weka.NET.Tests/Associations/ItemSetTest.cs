@@ -58,18 +58,5 @@ namespace Weka.NET.Tests.Associations
             Assert.AreEqual(expected, actual);
         }
 
-        [Test]
-        public void EnsureConfidenceForRuleDividesConsequenceCounterByPremiseCounter()
-        {
-            const int consequenceCount = 3;
-
-            const int premiseCount = 9;
-
-            double actual = ItemSet.ConfidenceForRule(premiseCount, consequenceCount);
-
-            Assert.AreEqual((double)premiseCount / (double)consequenceCount, actual, 0d);
-        }
-
-
     }
 }

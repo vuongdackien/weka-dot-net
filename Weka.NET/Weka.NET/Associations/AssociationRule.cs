@@ -5,6 +5,14 @@ using System.Text;
 
 namespace Weka.NET.Associations
 {
+    public static class AssociationRuleExt
+    {
+        public static double CalculateConfidence(this AssociationRule rule)
+        {
+            return (double) rule.PremiseCount / rule.ConsequenceCount;
+        }
+    }
+
     public class AssociationRule
     {
         public ItemSet Premise { get; private set; }
@@ -21,11 +29,6 @@ namespace Weka.NET.Associations
             PremiseCount = premiseCount;
             Consequence = consequence;
             ConsequenceCount = consequenceCount;
-        }
-
-        public double CalculateConfidence()
-        {
-            return ItemSet.ConfidenceForRule(PremiseCount, ConsequenceCount);
         }
 
         public override bool Equals(object obj)

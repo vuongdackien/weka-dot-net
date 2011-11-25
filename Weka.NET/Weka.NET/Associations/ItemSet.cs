@@ -113,14 +113,9 @@ namespace Weka.NET.Associations
             }
         }
 
-        public static double ConfidenceForRule(int premiseCount, int consequenceCount)
-        {
-            return (double)premiseCount / (double)consequenceCount;
-        }
-
         public override string ToString()
         {
-            return string.Format("Size: {0}, Items: {1}", Size, Arrays.ArrayToString(Items));
+            return string.Format("ItemSet[Size: {0}, Items: {1}]", Size, Arrays.ArrayToString(Items));
         }
     }
 
