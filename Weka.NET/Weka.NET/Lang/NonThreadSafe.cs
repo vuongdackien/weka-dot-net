@@ -6,7 +6,7 @@ using System.Text;
 namespace Weka.NET.Lang
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = true)]
-    public class NotThreadSafe : Attribute
+    public class NonThreadSafeAttribute : Attribute
     {
     }
 }

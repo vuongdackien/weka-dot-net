@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Weka.NET.Core;
+using Weka.NET.Lang;
 
 namespace Weka.NET.Associations
 {
+    [NonThreadSafe]
     public class ItemSetSupports
     {
         readonly DataSet dataSet;
