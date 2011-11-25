@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Weka.NET.Associations;
-using Weka.NET.Tests.Core;
 using NUnit.Framework;
 using Weka.NET.Core;
 
@@ -65,8 +61,9 @@ namespace Weka.NET.Tests.Associations
         [Test]
         public void EnsureConfidenceForRuleDividesConsequenceCounterByPremiseCounter()
         {
-            var consequenceCount = 3;
-            var premiseCount = 9;
+            const int consequenceCount = 3;
+
+            const int premiseCount = 9;
 
             double actual = ItemSet.ConfidenceForRule(premiseCount, consequenceCount);
 
