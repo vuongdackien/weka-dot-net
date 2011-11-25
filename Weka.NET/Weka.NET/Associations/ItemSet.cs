@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Weka.NET.Core;
 using Weka.NET.Utils;
+using Weka.NET.Lang;
 
 namespace Weka.NET.Associations
 {
@@ -23,11 +24,12 @@ namespace Weka.NET.Associations
     /// Fill description...
     /// <remarks="This is the C# port for ItemSet.java originally developed by Eibe Frank"/>
     /// </summary>
+    [Immutable]
     public class ItemSet : IEquatable<ItemSet>
     {
         public int Size { get; private set; }
 
-        public IList<double?> Items { private set; get; }
+        public IList<double?> Items { get; private set; }
 
         public double? this[int index]
         {

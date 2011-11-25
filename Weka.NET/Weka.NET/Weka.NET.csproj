@@ -50,6 +50,7 @@
     <Compile Include="Core\DataSetBuilder.cs" />
     <Compile Include="Core\Parsers\ArffParser.cs" />
     <Compile Include="Lang\DoubleExt.cs" />
+    <Compile Include="Lang\ImmutableAttribute.cs" />
     <Compile Include="Utils\Arrays.cs" />
     <Compile Include="Associations\Apriori2.cs" />
     <Compile Include="Associations\ItemSet.cs" />
