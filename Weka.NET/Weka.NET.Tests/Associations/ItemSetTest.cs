@@ -59,13 +59,6 @@ namespace Weka.NET.Tests.Associations
 
             expected.Add(anotherItemSet);
 
-            Console.WriteLine("Actual:");
-
-            foreach (var i in actual)
-            {
-                Console.WriteLine(i.ToString());
-            }
-
             Assert.AreEqual(expected, actual);
         }
 
