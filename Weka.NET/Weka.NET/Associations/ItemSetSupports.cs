@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Weka.NET.Core;
 using Weka.NET.Lang;
 
@@ -40,15 +38,21 @@ namespace Weka.NET.Associations
                 return;
             }
 
-            int count = 0;
+            /*
+             * dataSet.Instances.Count(itemSet.ContainedBy);
+             * 
+             * is the Linq / group expression for:
+             * 
+             * foreach (var instance in dataSet.Instances)
+             * {
+             *      if (itemSet.ContainedBy(instance))
+             *      {
+             *          count++;
+             *      }
+             * }
+             */
 
-            foreach (var instance in dataSet.Instances)
-            {
-                if (itemSet.ContainedBy(instance))
-                {
-                    count++;
-                }
-            }
+            int count = dataSet.Instances.Count(itemSet.ContainedBy);
 
             supports[itemSet] = count;
         }
