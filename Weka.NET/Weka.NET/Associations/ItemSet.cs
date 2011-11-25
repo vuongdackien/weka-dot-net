@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Weka.NET.Core;
-using System.Runtime.CompilerServices;
+using Weka.NET.Utils;
 
 namespace Weka.NET.Associations
 {
-    public class ItemSetComparer<ItemSet> : IEqualityComparer<ItemSet>
+    public class ItemSetComparer : IEqualityComparer<ItemSet>
     {
         public bool Equals(ItemSet left, ItemSet right)
         {
@@ -26,8 +25,6 @@ namespace Weka.NET.Associations
     /// </summary>
     public class ItemSet : IEquatable<ItemSet>
     {
-        private List<ItemSet> combineds;
-
         public int Size { get; private set; }
 
         public IList<double?> Items { private set; get; }
@@ -50,83 +47,6 @@ namespace Weka.NET.Associations
             }
         }
 
-        public bool Equals(ItemSet other)
-        {
-            var otherItemSet = other as ItemSet;
-
-            if (Items.Count() != otherItemSet.Items.Count())
-            {
-                return false;
-            }
-
-            for (int i = 0; i < Items.Count; i++)
-            {
-                if (Items[i].HasValue)
-                {
-                    if (otherItemSet.Items[i].HasValue)
-                    {
-                        if (Items[i].Value.Equals(otherItemSet.Items[i].Value))
-                        {
-                            continue;
-                        }
-                    }
-                    return false;
-                }
-
-                if (otherItemSet.Items[i].HasValue)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        public override bool Equals(object other)
-        {
-            if (other is ItemSet)
-            {
-                return Equals(other as ItemSet);
-            }
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            int hash = 1;
-
-            for (int i = 0; i < Items.Count; i++)
-            {
-                if (Items[i].HasValue)
-                {
-                    hash *= Items[i].Value.GetHashCode();
-                }
-            }
-
-            return 13 * hash;
-        }
-
-        public static double ConfidenceForRule(int premiseCount, int consequenceCount)
-        {
-            return (double)premiseCount / (double)consequenceCount;
-        }
-
-        public override string ToString()
-        {
-            var buff = new StringBuilder("ItemSet{items:[");
-            
-            foreach (var item in Items)
-            {
-                buff.Append(item.HasValue ? item.Value.ToString() : "null");
-                buff.Append(",");
-            }
-            buff.Replace(',', ']', buff.Length - 1, 1);
-
-            buff.Append("}");
-
-            return buff.ToString();
-        }
-
         public bool ContainedBy(Instance instance)
         {
             for (int i = 0; i < Items.Count; i++)
@@ -146,6 +66,59 @@ namespace Weka.NET.Associations
             }
 
             return true;
+        }
+
+        public bool Equals(ItemSet other)
+        {
+            if (ReferenceEquals(null, other))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            return other.Size == Size && Arrays.AreEquals(other.Items, Items);
+        }
+
+        public override bool Equals(object other)
+        {
+            if (ReferenceEquals(null, other))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            if (other.GetType() != typeof(ItemSet))
+            {
+                return false;
+            }
+
+            return Equals(other as ItemSet);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (Size * 397) ^ (Items != null ? Arrays.GetHashCodeForArray(Items) : 0);
+            }
+        }
+
+        public static double ConfidenceForRule(int premiseCount, int consequenceCount)
+        {
+            return (double)premiseCount / (double)consequenceCount;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("Size: {0}, Items: {1}", Size, Arrays.ArrayToString(Items));
         }
     }
 

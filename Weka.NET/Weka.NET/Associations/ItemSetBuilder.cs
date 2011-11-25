@@ -138,7 +138,7 @@ namespace Weka.NET.Associations
 
         public HashSet<ItemSet> BuildSingletons(IList<Weka.NET.Core.Attribute> attributes)
         {
-            var singletons = new HashSet<ItemSet>(new ItemSetComparer<ItemSet>());
+            var singletons = new HashSet<ItemSet>(new ItemSetComparer());
 
             for (int attributeIndex = 0; attributeIndex < attributes.Count; attributeIndex++)
             {

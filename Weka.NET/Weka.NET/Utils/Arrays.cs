@@ -50,5 +50,72 @@ namespace Weka.NET.Utils
 
             return values;
         }
+
+        internal static bool AreEquals(IList<double?> left, IList<double?> right)
+        {
+            if (left.Count != right.Count)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < left.Count; i++)
+            {
+                if (left[i].HasValue)
+                {
+                    if (false == right[i].HasValue)
+                    {
+                        return false;
+                    }
+
+                    if (false == left[i].Value.Equals(right[i].Value))
+                    {
+                        return false;
+                    }
+
+                    continue;
+                }
+
+                if (right[i].HasValue)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        internal static string ArrayToString(IList<double?> Items)
+        {
+            var buff = new StringBuilder("[");
+
+            foreach (var item in Items)
+            {
+                if (item.HasValue)
+                {
+                    buff.Append(item.Value);
+                }
+
+                buff.Append(",");
+            }
+
+            buff.Replace(',', ']', buff.Length - 1, buff.Length);
+
+            return buff.ToString();
+        }
+
+        internal static int GetHashCodeForArray(IList<double?> Items)
+        {
+            int hash = 13;
+
+            for (int i = 0; i < Items.Count; i++)
+            {
+                if (Items[i].HasValue)
+                {
+                    hash ^= Items[i].Value.GetHashCode();
+                }
+            }
+
+            return hash;
+        }
     }
 }
