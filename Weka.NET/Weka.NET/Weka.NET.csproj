@@ -46,7 +46,7 @@
     <Compile Include="Associations\Apriori.cs" />
     <Compile Include="Associations\AssociationRule.cs" />
     <Compile Include="Associations\ItemSetBuilder.cs" />
-    <Compile Include="Associations\ItemSetSupports.cs" />
+    <Compile Include="Associations\ItemSetCounterSupport.cs" />
     <Compile Include="Core\DataSetBuilder.cs" />
     <Compile Include="Core\Parsers\ArffParser.cs" />
     <Compile Include="Lang\DoubleExt.cs" />

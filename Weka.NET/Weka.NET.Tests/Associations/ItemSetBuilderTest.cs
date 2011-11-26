@@ -9,7 +9,7 @@ using Weka.NET.Utils;
 namespace Weka.NET.Tests.Associations
 {
     [TestFixture]
-    public class ItemSetSupportsTest
+    public class ItemSetCounterSupportTest
     {
         [Test]
         public void CanCountItemSetSupport()
@@ -28,12 +28,10 @@ namespace Weka.NET.Tests.Associations
                 .Build();
 
             //When
-            var supports = new ItemSetSupports(dataSet);
-
-            supports.AddItemSets(new[] { new ItemSet(new double?[] { null, 0d }) });
+            var counter = new ItemSetCounterSupport(dataSet);
 
             //Then
-            Assert.AreEqual(3, supports[new ItemSet(new double?[] { null, 0d })]);
+            Assert.AreEqual(3, counter.CountSupportFor(new ItemSet(new double?[] { null, 0d })));
         }
     }
 

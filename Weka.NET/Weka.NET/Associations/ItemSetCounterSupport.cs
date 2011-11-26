@@ -6,36 +6,23 @@ using Weka.NET.Lang;
 namespace Weka.NET.Associations
 {
     [NonThreadSafe]
-    public class ItemSetSupports
+    public class ItemSetCounterSupport
     {
         readonly DataSet dataSet;
 
         readonly IDictionary<ItemSet, int> supports;
 
-        public ItemSetSupports(DataSet dataSet)
+        public ItemSetCounterSupport(DataSet dataSet)
         {
             this.dataSet = dataSet;
             this.supports = new Dictionary<ItemSet, int>();
         }
 
-        public int this[ItemSet index]
-        {
-            get { return supports[index]; }
-        }
-
-        public void AddItemSets(IEnumerable<ItemSet> itemSets)
-        {
-            foreach (var itemSet in itemSets)
-            {
-                AddItemSets(itemSet);
-            }
-        }
-
-        public void AddItemSets(ItemSet itemSet)
+        public int CountSupportFor(ItemSet itemSet)
         {
             if (supports.ContainsKey(itemSet))
             {
-                return;
+                return supports[itemSet];
             }
 
             /*
@@ -55,6 +42,8 @@ namespace Weka.NET.Associations
             int count = dataSet.Instances.Count(itemSet.ContainedBy);
 
             supports[itemSet] = count;
+
+            return count;
         }
     }
 }
