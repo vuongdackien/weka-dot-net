@@ -27,19 +27,15 @@ namespace Weka.NET
             //Given
             var dataSet = TestSets.WeatherNominal();
 
-            //And
-            var builder = new ItemSetBuilder(0.1);
+            var builder = new ItemSetBuilder(.4);
 
-            var singletons = builder.BuildSingletons(dataSet.Attributes);
+            var ruleBuilder = new RuleBuilder(.8);
 
-            var stuff = new ItemSetBuilder.ItemSetBuilderStuff(dataSet, 6);
+            var actual = new Apriori(builder, ruleBuilder);
 
-            stuff.AddAll(singletons);
+            var rules = actual.BuildAssociationRules(dataSet);
 
-            //When
-            builder.FindSets(1, stuff);
-
-            Console.WriteLine(stuff.ItemSets);
+        
         }
 
 

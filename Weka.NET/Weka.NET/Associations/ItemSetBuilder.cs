@@ -1,156 +1,48 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Weka.NET.Core;
 using Weka.NET.Utils;
-using System;
 
 namespace Weka.NET.Associations
 {
-    public class ItemSets
-    {
-        public IDictionary<int, HashSet<ItemSet>> SetsBySize { private set; get; }
-
-        public IDictionary<ItemSet, int> Counts { private set; get; }
-
-        public ItemSets()
-        {
-            SetsBySize = new Dictionary<int, HashSet<ItemSet>>();
-            Counts = new Dictionary<ItemSet, int>();
-        }
-    }
-
     public interface IItemSetBuilder
     {
-        double MinSupport { get; }
-
-        ItemSets BuildItemSets(DataSet dataSet);
+        IDictionary<int, IList<ItemSet>> BuildItemSets(DataSet dataSet);
     }
 
     public class ItemSetBuilder : IItemSetBuilder
     {
-        public double MinSupport { get; private set; }
+        public double MinSupport {get; private set;}
 
         public ItemSetBuilder(double minSupport)
         {
+            if (minSupport < 0 || minSupport > 1)
+            {
+                throw new ArgumentException("MinSupport ranges between 0 and 1");
+            }
+
             MinSupport = minSupport;
         }
 
-        public ItemSets BuildItemSets(DataSet dataSet)
+        public IList<ItemSet> BuildSingletons(DataSet dataSet)
         {
-            double necSupport = MinSupport * (double)dataSet.Count;
+            var singletons = new List<ItemSet>();
 
-            var stuffs = new ItemSetBuilderStuff(dataSet, (int) necSupport);
-
-            var singletons = BuildSingletons(dataSet.Attributes);
-
-            stuffs.AddAll(singletons);
-
-            CheckCountMaxSizeIs(stuffs, 1);
-
-            FindSets(size:1, itemSets:stuffs);
-            
-            return stuffs.ItemSets;
-        }
-
-        public void CheckCountMaxSizeIs(ItemSetBuilderStuff stuffs, int expectedMaxSize)
-        {
-            if (expectedMaxSize != stuffs.ItemSets.SetsBySize.Keys.Max())
+            for (int attributeIndex = 0; attributeIndex < dataSet.Attributes.Count; attributeIndex++)
             {
-                throw new Exception("expecting: " + expectedMaxSize + " but was: " + stuffs.ItemSets.SetsBySize.Keys.Max());
-            }
-        }
-
-        public void FindSets(int size, ItemSetBuilderStuff itemSets)
-        {
-            if (false == itemSets.ItemSets.SetsBySize.ContainsKey(size))
-            {
-                return;
-            }
-
-            var itemsToEnlarge = itemSets.ItemSets.SetsBySize[size].ToList();
-
-            if (itemsToEnlarge.Count == 1)
-            {
-                return;
-            }
-
-            var allCombineds = new List<ItemSet>();
-
-            for (int i = 0; i < itemsToEnlarge.Count; i++)
-            {
-                for (int j = i+1; j < itemsToEnlarge.Count; j++)
-                {
-                    var combineds = CombineItemSets(itemsToEnlarge, i, j, size);
-
-                    allCombineds.AddRange(combineds);
-                }
-            }
-
-            itemSets.AddAll(allCombineds);
-
-            if (false == itemSets.ItemSets.SetsBySize.ContainsKey(size))
-            {
-                return;
-            }
-
-          //  CheckCountMaxSizeIs(itemSets, size);
-
-            size++;
-
-            FindSets(size, itemSets);
-        }
-
-        public IEnumerable<ItemSet> CombineItemSets(List<ItemSet> items, int i, int j, int size)
-        {
-            var combineds = new List<ItemSet>();
-
-            for (int v1 = 0; v1 < items[i].Items.Count; v1++)
-            {
-                if (items[i].Items[v1].HasValue && false == items[j].Items[v1].HasValue)
-                {
-                    var newValues = new double?[items[i].Items.Count];
-
-                    items[j].Items.CopyTo(newValues, 0);
-
-                    newValues[v1] = items[i].Items[v1].Value;
-
-                    combineds.Add(new ItemSet(newValues));
-
-                    continue;
-                }
-
-                if (false == items[i].Items[v1].HasValue && items[j].Items[v1].HasValue)
-                {
-                    var newValues = new double?[items[i].Items.Count];
-
-                    items[i].Items.CopyTo(newValues, 0);
-
-                    newValues[v1] = items[j].Items[v1].Value;
-
-                    combineds.Add(new ItemSet(newValues));
-
-                    continue;
-                }
-            }
-
-            return combineds;
-        }
-
-        public HashSet<ItemSet> BuildSingletons(IList<Weka.NET.Core.Attribute> attributes)
-        {
-            var singletons = new HashSet<ItemSet>(new ItemSetComparer());
-
-            for (int attributeIndex = 0; attributeIndex < attributes.Count; attributeIndex++)
-            {
-                var values = (attributes[attributeIndex] as NominalAttribute).Values;
+                var values = (dataSet.Attributes[attributeIndex] as NominalAttribute).Values;
 
                 for (int valueIndex = 0; valueIndex < values.Length; valueIndex++)
                 {
-                    var items = new double?[attributes.Count];
+                    var items = new double?[dataSet.Attributes.Count];
 
                     items[attributeIndex] = valueIndex;
 
-                    var itemSet = new ItemSet(items: items);
+                    int support = CountSupportFor(dataSet, items);
+
+                    var itemSet = new ItemSet(items: items, support: support);
 
                     singletons.Add(itemSet);
                 }
@@ -159,68 +51,125 @@ namespace Weka.NET.Associations
             return singletons;
         }
 
-        public class ItemSetBuilderStuff
+        public int CountSupportFor(DataSet dataSet, double?[] items)
         {
-            readonly DataSet dataSet;
+            int support = 0;
 
-            readonly int necSupport;
-
-            public ItemSets ItemSets {get;private set;}
-
-            public ItemSetBuilderStuff(DataSet dataSet, int necSupport)
+            foreach (var instance in dataSet.Instances)
             {
-                this.dataSet = dataSet;
-                this.necSupport = necSupport;
-                this.ItemSets = new ItemSets();
-            }
-
-            public void Add(ItemSet itemSet)
-            {
-                if (ItemSets.Counts.ContainsKey(itemSet))
+                if (ContainedBy(instance, items))
                 {
-                    return;
-                }
-
-                var count = CountSupport(itemSet);
-
-                if (count < necSupport)
-                {
-                    return;
-                }
-
-                ItemSets.Counts[itemSet] = count;
-
-                if (false == ItemSets.SetsBySize.ContainsKey(itemSet.Size))
-                {
-                    ItemSets.SetsBySize[itemSet.Size] = new HashSet<ItemSet>();
-                }
-
-                ItemSets.SetsBySize[itemSet.Size].Add(itemSet);
-            }
-
-            public void AddAll(IEnumerable<ItemSet> itemSets)
-            {
-                foreach (var itemSet in itemSets)
-                {
-                    Add(itemSet);
+                    support++;
                 }
             }
 
-            internal int CountSupport(ItemSet itemSet)
-            {
-                int count = 0;
+            return support;
+        }
 
-                foreach (var instance in dataSet.Instances)
+        internal bool ContainedBy(Instance instance, double?[] items)
+        {
+            for (int i = 0; i < items.Length; i++)
+            {
+                if (items[i].HasValue)
                 {
-                    if (itemSet.ContainedBy(instance))
+                    if (false == instance[i].HasValue)
                     {
-                        count++;
+                        return false;
+                    }
+
+                    if (items[i] != instance[i])
+                    {
+                        return false;
                     }
                 }
+            }
+            return true;
+        }
 
-                return count;
+        public IList<ItemSet> MergeRightAgainstLeft(DataSet dataSet, ItemSet first, ItemSet second)
+        {
+            var newItemSets = new List<ItemSet>();
+
+            for (int i = 0; i < first.Items.Count; i++)
+            {
+                if (first[i].HasValue)
+                {
+                    continue;
+                }
+
+                if (false == second[i].HasValue)
+                {
+                    continue;
+                }
+
+                double?[] newItems = new double?[first.Items.Count];
+
+                first.Items.CopyTo(newItems, 0);
+
+                newItems[i] = second[i];
+
+                int support = CountSupportFor(dataSet, newItems);
+
+                newItemSets.Add(new ItemSet(items: newItems, support:support));
             }
 
+            return newItemSets;
+        }
+
+        public IList<ItemSet> CombineItemSets(DataSet dataSet, IList<ItemSet> itemSets)
+        {
+            var newItemSets = new HashSet<ItemSet>();
+
+            for (int i = 0; i < itemSets.Count; i++)
+            {
+                for (int j = 0; j < itemSets.Count; j++)
+                {
+                    var mergedItems = MergeRightAgainstLeft(dataSet, itemSets[i], itemSets[j]);
+
+                    newItemSets.AddAll(mergedItems);
+                }
+            }
+
+            return newItemSets.ToList();
+        }
+
+        public IDictionary<int, IList<ItemSet>> BuildItemSets(DataSet dataSet)
+        {
+            //count == 1
+            // x    == .2
+
+            //.2 * count
+            
+            
+            int necSupport = (int)(MinSupport * (double)dataSet.Count);
+
+            var itemSetsByCount = new Dictionary<int, IList<ItemSet>>();
+
+            int currentSize = 1;
+
+            var singletons = BuildSingletons(dataSet);
+
+            itemSetsByCount[currentSize] = Prune(singletons, necSupport);
+
+            while (itemSetsByCount[currentSize].Count > 0)
+            {
+                var nextItemSets = CombineItemSets(dataSet, itemSetsByCount[currentSize]);
+
+                var prunnedNextItemSets = Prune(nextItemSets, necSupport);
+
+                currentSize++;
+
+                itemSetsByCount[currentSize] = prunnedNextItemSets;
+            }
+
+            return itemSetsByCount;
+        }
+
+        public IList<ItemSet> Prune(IList<ItemSet> toPrune, int necSupport)
+        {
+            var prunned = toPrune.Where(item => item.Support > necSupport);
+
+            return prunned.ToList();
         }
     }
 }

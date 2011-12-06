@@ -1,61 +1,50 @@
-﻿using System.Collections.Generic;
+﻿using NUnit.Framework;
 using Weka.NET.Associations;
-using NUnit.Framework;
-using Weka.NET.Core;
+using Weka.NET.Utils;
+using System.Collections.Generic;
 
 namespace Weka.NET.Tests.Associations
 {
-    [TestFixture]
     public class ItemSetTest
     {
         [Test]
-        public void ContainedByReturnsTrueIfInstanceContainsItemSet()
+        public void CanCompareDifferentItemSets()
         {
-            var someInstance = new Instance(values: new List<double?> { 1d, 2d, 3d });
+            var someItemSet = ItemSetTestBuilder.NewItemSet().WithItems(null, 5).WithAnySupport().Build();
 
-            var someItemSet = new ItemSet(items: new List<double?> { null, 2, 3 });
+            var anotherItemSet = ItemSetTestBuilder.NewItemSet().WithItems(5, null).WithAnySupport().Build();
 
-            Assert.IsTrue(someItemSet.ContainedBy(someInstance));
+            Assert.IsFalse(someItemSet.Equals(anotherItemSet));
         }
 
         [Test]
-        public void ContainedByReturnsFalseIfInstanceDoesntContainItemSet()
+        public void CanTestForIntersectingSets()
         {
-            var someInstance = new Instance(values: new List<double?> { 1d, 2d });
+            var someItemSet = ItemSetTestBuilder.NewItemSet().WithItems(null, 5).WithAnySupport().Build();
 
-            var someItemSet = new ItemSet(items: new List<double?> { null, 5 });
+            var anotherItemSet = ItemSetTestBuilder.NewItemSet().WithItems(5, null).WithAnySupport().Build();
 
-            Assert.IsFalse(someItemSet.ContainedBy(someInstance));
+            Assert.IsFalse(someItemSet.Intersects(anotherItemSet));
         }
 
         [Test]
-        public void ItemSetImplementsEquatable()
+        public void CanCompareEquivalentItemSets()
         {
-            var someItemSet = new ItemSet(items: new List<double?> { null, 5 });
+            var sameItemSets = ItemSetTestBuilder.NewItemSet().WithItems(null, 5).WithSupport(0).BuildMany(2);
 
-            var anotherItemSet = new ItemSet(items: new List<double?> { null, 5 });
-
-            Assert.IsTrue(someItemSet.Equals(anotherItemSet));
+            Assert.IsTrue(sameItemSets[0].Equals(sameItemSets[1]));
         }
 
         [Test]
-        public void ComparingItemSetsWithEqualsOperator()
+        public void ItemSetProperlyImplementsGetHashCodeAndEquals()
         {
-            var actual = new HashSet<ItemSet>();
+            var someHashSet = new HashSet<ItemSet>();
 
-            var someItemSet = new ItemSet(items: new List<double?> { null, 5 });
+            var sameItemSets = ItemSetTestBuilder.NewItemSet().WithItems(1, 2, 3).WithSupport(0).BuildMany(5);
 
-            actual.Add(someItemSet);
+            someHashSet.AddAll(sameItemSets);
 
-            var anotherItemSet = new ItemSet(items: new List<double?> { null, 5 });
-
-            actual.Add(anotherItemSet);
-
-            var expected = new HashSet<ItemSet>();
-
-            expected.Add(anotherItemSet);
-
-            Assert.AreEqual(expected, actual);
+            Assert.AreEqual(1, someHashSet.Count);
         }
 
     }

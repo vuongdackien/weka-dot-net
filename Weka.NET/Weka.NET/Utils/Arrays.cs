@@ -6,8 +6,9 @@ using System.Text;
 namespace Weka.NET.Utils
 {
     public static class Arrays
-    {
-        internal static bool Equals(double?[] left, double?[] right)
+    { 
+
+        public static bool ArrayEquals(double?[] left, double?[] right)
         {
             if (left.Length != right.Length)
             {
@@ -51,7 +52,7 @@ namespace Weka.NET.Utils
             return values;
         }
 
-        internal static bool AreEquals(IList<double?> left, IList<double?> right)
+        public static bool AreEquals(IList<double?> left, IList<double?> right)
         {
             if (left.Count != right.Count)
             {
@@ -116,6 +117,32 @@ namespace Weka.NET.Utils
             }
 
             return hash;
+        }
+
+        public static IList<double?> Merge(IList<double?> first, IList<double?> second)
+        {
+            double?[] result = new double?[first.Count];
+
+            for (int i = 0; i < first.Count; i++)
+            {
+                if (first[i].HasValue)
+                {
+                    if (second[i].HasValue)
+                    {
+                        throw new Exception("booh");
+                    }
+
+                    result[i] = first[i];
+                    continue;
+                }
+
+                if (second[i].HasValue)
+                {
+                    result[i] = second[i];
+                }
+            }
+
+            return result.ToList();
         }
     }
 }

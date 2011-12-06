@@ -46,15 +46,14 @@
     <Compile Include="Associations\Apriori.cs" />
     <Compile Include="Associations\AssociationRule.cs" />
     <Compile Include="Associations\ItemSetBuilder.cs" />
-    <Compile Include="Associations\ItemSetCounterSupport.cs" />
+    <Compile Include="Associations\ItemSet.cs" />
+    <Compile Include="Associations\RuleBuilder.cs" />
     <Compile Include="Core\DataSetBuilder.cs" />
     <Compile Include="Core\Parsers\ArffParser.cs" />
     <Compile Include="Lang\DoubleExt.cs" />
     <Compile Include="Lang\ImmutableAttribute.cs" />
     <Compile Include="Lang\NonThreadSafe.cs" />
     <Compile Include="Utils\Arrays.cs" />
-    <Compile Include="Associations\Apriori2.cs" />
-    <Compile Include="Associations\ItemSet.cs" />
     <Compile Include="Classifiers\IClassifier.cs" />
     <Compile Include="Classifiers\OneRuleClassifier.cs" />
     <Compile Include="Core\Attribute.cs" />

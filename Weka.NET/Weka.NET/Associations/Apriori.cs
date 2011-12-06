@@ -7,54 +7,34 @@ using Weka.NET.Utils;
 
 namespace Weka.NET.Associations
 {
+    /// <summary>
+    /// Apriori algorithm is based on the following key property:
+    /// Every subset of a frequent / large item set is also a frequent / large
+    /// </summary>
     public interface IApriori
     {
-        double MinSupport { get; }
-
-        int MaxNumRules { get; }
-
         IList<AssociationRule> BuildAssociationRules(DataSet dataSet);
     }
 
-    [Serializable]
     public class Apriori : IApriori
     {
-        public double MinSupport { private set; get; }
+        readonly IItemSetBuilder itemSetBuilder;
 
-        public int MaxNumRules { private set; get; }
+        readonly IRuleBuilder ruleBuilder;
 
-        public Apriori(double minSupport, int maxNumRules)
+        public Apriori(IItemSetBuilder iItemSetBuilder, IRuleBuilder ruleBuilder)
         {
-            MinSupport = minSupport;
-            MaxNumRules = maxNumRules;
+            this.itemSetBuilder = iItemSetBuilder;
+            this.ruleBuilder = ruleBuilder;
         }
 
         public IList<AssociationRule> BuildAssociationRules(DataSet dataSet)
         {
-            return null;
+            var itemSets = itemSetBuilder.BuildItemSets(dataSet);
+
+            var rules = ruleBuilder.BuildRules(itemSets);
+
+            return rules;
         }
     }
 }
-
-/*            CodeContract.NotSupportedStringAttributes(dataSet.Attributes);
-
-            ItemSets BuildItemSets(DataSet dataSet, double minSupport);
-
-            var execution = new AprioriState();
-
-            var singletons = BuildSingletons(dataSet.Attributes);
-
-            
-
-            /*var executionParams = new AprioriExecution(dataSet);
-
-            executionParams.AddItemSets();
-
-            executionParams.BuildItemSets(MinSupport);
-
-            executionParams.BuildRules(MaxNumRules);
-
-            return execution.Rules;
-        }
-
- */
