@@ -9,7 +9,7 @@ namespace Weka.NET.Associations
 {
     public interface IItemSetBuilder
     {
-        IDictionary<int, IList<ItemSet>> BuildItemSets(DataSet dataSet);
+        IDictionary<int, IList<ItemSet>> BuildItemSets(IDataSet dataSet);
     }
 
     public class ItemSetBuilder : IItemSetBuilder
@@ -26,7 +26,7 @@ namespace Weka.NET.Associations
             MinSupport = minSupport;
         }
 
-        public IList<ItemSet> BuildSingletons(DataSet dataSet)
+        public IList<ItemSet> BuildSingletons(IDataSet dataSet)
         {
             var singletons = new List<ItemSet>();
 
@@ -51,7 +51,7 @@ namespace Weka.NET.Associations
             return singletons;
         }
 
-        public int CountSupportFor(DataSet dataSet, double?[] items)
+        public int CountSupportFor(IDataSet dataSet, double?[] items)
         {
             int support = 0;
 
@@ -86,7 +86,7 @@ namespace Weka.NET.Associations
             return true;
         }
 
-        public IList<ItemSet> MergeRightAgainstLeft(DataSet dataSet, ItemSet first, ItemSet second)
+        public IList<ItemSet> MergeRightAgainstLeft(IDataSet dataSet, ItemSet first, ItemSet second)
         {
             var newItemSets = new List<ItemSet>();
 
@@ -116,7 +116,7 @@ namespace Weka.NET.Associations
             return newItemSets;
         }
 
-        public IList<ItemSet> CombineItemSets(DataSet dataSet, IList<ItemSet> itemSets)
+        public IList<ItemSet> CombineItemSets(IDataSet dataSet, IList<ItemSet> itemSets)
         {
             var newItemSets = new HashSet<ItemSet>();
 
@@ -133,7 +133,7 @@ namespace Weka.NET.Associations
             return newItemSets.ToList();
         }
 
-        public IDictionary<int, IList<ItemSet>> BuildItemSets(DataSet dataSet)
+        public IDictionary<int, IList<ItemSet>> BuildItemSets(IDataSet dataSet)
         {
             //count == 1
             // x    == .2

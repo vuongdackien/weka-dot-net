@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Weka.NET.Core;
-using Weka.NET.Utils;
-
-namespace Weka.NET.Associations
+﻿namespace Weka.NET.Associations
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using Weka.NET.Core;
+    using Weka.NET.Utils;
+    
     /// <summary>
     /// Apriori algorithm is based on the following key property:
     /// Every subset of a frequent / large item set is also a frequent / large
     /// </summary>
     public interface IApriori
     {
-        IList<AssociationRule> BuildAssociationRules(DataSet dataSet);
+        IList<AssociationRule> BuildAssociationRules(IDataSet dataSet);
     }
 
     public class Apriori : IApriori
@@ -28,7 +28,7 @@ namespace Weka.NET.Associations
             this.ruleBuilder = ruleBuilder;
         }
 
-        public IList<AssociationRule> BuildAssociationRules(DataSet dataSet)
+        public IList<AssociationRule> BuildAssociationRules(IDataSet dataSet)
         {
             var itemSets = itemSetBuilder.BuildItemSets(dataSet);
 

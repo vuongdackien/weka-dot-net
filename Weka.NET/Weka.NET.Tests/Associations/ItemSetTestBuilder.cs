@@ -24,7 +24,7 @@ namespace Weka.NET.Tests.Associations
             return this;
         }
 
-        public ItemSetTestBuilder WithSupport(int support)
+        public ItemSetTestBuilder WithAbsoluteSupport(int support)
         {
             propertyValues["Support"] = support;
 
@@ -48,7 +48,7 @@ namespace Weka.NET.Tests.Associations
 
         internal ItemSetTestBuilder WithAnySupport()
         {
-            WithSupport(random.Next(10));
+            WithAbsoluteSupport(random.Next(10));
 
             return this;
         }

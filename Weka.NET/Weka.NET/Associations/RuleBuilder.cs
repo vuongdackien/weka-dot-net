@@ -60,9 +60,9 @@ namespace Weka.NET.Associations
 
                         if (Arrays.AreEquals(fullRule.Items, mergeItems))
                         {
-                            rules.Add(new AssociationRule(premisse: itemSets[i], consequence: itemSets[j], rule: fullRule));
+                            rules.Add(new AssociationRule(premisse: itemSets[i], consequence: itemSets[j], fullRule: fullRule));
 
-                            rules.Add(new AssociationRule(premisse: itemSets[j], consequence: itemSets[i], rule: fullRule));
+                            rules.Add(new AssociationRule(premisse: itemSets[j], consequence: itemSets[i], fullRule: fullRule));
 
                             return rules;
                         }

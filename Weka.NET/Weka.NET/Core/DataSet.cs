@@ -5,7 +5,18 @@ using System.Text;
 
 namespace Weka.NET.Core
 {
-    public class DataSet
+    public interface IDataSet
+    {
+        string Name { get; }
+
+        IList<Attribute> Attributes { get; }
+
+        IList<Instance> Instances { get; }
+
+        int Count { get; }
+    }
+
+    public class DataSet : IDataSet
     {
         public string Name { get; private set; }
 

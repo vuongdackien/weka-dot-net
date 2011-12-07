@@ -8,6 +8,24 @@ namespace Weka.NET.Utils
 {
     public static class TestSets
     {
+        public static DataSet BooleanDataSet()
+        {
+            return DataSetBuilder.AnyDataSet()
+                .WithRelationName("super.simple")
+
+                .WithNominalAttribute(name: "pen", values: new[] { "T", "F" })
+                .WithNominalAttribute(name: "ink", values: new[] { "T", "F" })
+                .WithNominalAttribute(name: "diary", values: new[] { "T", "F" })
+                .WithNominalAttribute(name: "soap", values: new[] { "T", "F" })
+
+                .AddData(new[] { "T", "T", "T", "T" })
+                .AddData(new[] { "T", "T", "T", "F" })
+                .AddData(new[] { "T", "F", "T", "F" })
+                .AddData(new[] { "T", "T", "F", "T" })
+
+                .Build();
+        }
+
         public static DataSet WeatherNominal()
         {
             return DataSetBuilder.AnyDataSet()

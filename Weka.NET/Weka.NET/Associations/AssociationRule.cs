@@ -1,33 +1,35 @@
-﻿using System;
-using System.Text;
-
-namespace Weka.NET.Associations
+﻿namespace Weka.NET.Associations
 {
+    using System;
+    using System.Text;
+    using Weka.NET.Lang;
+    
+    [Immutable]
     public class AssociationRule : IEquatable<AssociationRule>
     {
-        private ItemSet rule;
+        public ItemSet FullRule { get; private set; }
 
         public ItemSet Premisse { get; private set; }
 
         public ItemSet Consequence {get; private set;}
 
-        public double Confidence { get { return (double)rule.Support / (double)Premisse.Support; } }
+        public double Confidence { get { return (double)FullRule.Support / (double)Premisse.Support; } }
 
         /// <summary>
         /// Support of LHS Union RHS
         /// </summary>
-        public double Support { get { return rule.Support; } }
+        public double Support { get { return FullRule.Support; } }
 
-        public AssociationRule(ItemSet premisse, ItemSet consequence, ItemSet rule)
+        public AssociationRule(ItemSet premisse, ItemSet consequence, ItemSet fullRule)
         {
             this.Premisse = premisse;
             this.Consequence = consequence;
-            this.rule = rule;
+            this.FullRule = fullRule;
         }
 
         public override int GetHashCode()
         {
-            return 37 * Confidence.GetHashCode() * Premisse.GetHashCode() ^ Consequence.GetHashCode();
+            return 37 * Premisse.GetHashCode() ^ Consequence.GetHashCode() ^ Confidence.GetHashCode();
         }
 
         public bool Equals(AssociationRule other)
@@ -45,14 +47,12 @@ namespace Weka.NET.Associations
             return Equals(otherRule);
         }
 
-        public double CalculateConfidence()
-        {
-            return -1;
-        }
-
         public override string ToString()
         {
-            return "[" + Premisse.ToString() + " => " + Consequence.ToString() + ", Confidence: " + Confidence + "]";
+            return "AssociationRule[Premisse=" + Premisse.ToString()
+                + ", Consequence=" + Consequence.ToString()
+                + ", Confidence: " + Confidence
+                + ", Support: " + Support + "]";
         }
     }
 }

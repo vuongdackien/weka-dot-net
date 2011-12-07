@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Associations\AprioriTest.cs" />
     <Compile Include="Associations\AssociationRuleTest.cs" />
     <Compile Include="Associations\ItemSetBuilderTest.cs" />
     <Compile Include="Associations\ItemSetTest.cs" />

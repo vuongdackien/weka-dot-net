@@ -20,12 +20,12 @@ namespace Weka.NET.Tests.Associations
 
             var itemSets = new List<ItemSet>
                 { 
-                   ItemSetTestBuilder.NewItemSet().WithItems(1,null).WithSupport(2).Build()
+                   ItemSetTestBuilder.NewItemSet().WithItems(1,null).WithAbsoluteSupport(2).Build()
                    ,
-                   ItemSetTestBuilder.NewItemSet().WithItems(null,1).WithSupport(3).Build()
+                   ItemSetTestBuilder.NewItemSet().WithItems(null,1).WithAbsoluteSupport(3).Build()
                 };
 
-            var fullRule = ItemSetTestBuilder.NewItemSet().WithItems(1,1).WithSupport(2).Build();
+            var fullRule = ItemSetTestBuilder.NewItemSet().WithItems(1,1).WithAbsoluteSupport(2).Build();
 
             //When
             var actual = ruleBuilder.BuildRules(fullRule, itemSets);
@@ -34,11 +34,11 @@ namespace Weka.NET.Tests.Associations
             var expected = new List<AssociationRule>
             {
                 new AssociationRule(
-                    premisse: ItemSetTestBuilder.NewItemSet().WithItems(1,null).WithSupport(2).Build()
+                    premisse: ItemSetTestBuilder.NewItemSet().WithItems(1,null).WithAbsoluteSupport(2).Build()
                     ,
-                    consequence: ItemSetTestBuilder.NewItemSet().WithItems(1,null).WithSupport(3).Build()
+                    consequence: ItemSetTestBuilder.NewItemSet().WithItems(1,null).WithAbsoluteSupport(3).Build()
                     ,
-                    rule: ItemSetTestBuilder.NewItemSet().WithItems(1,1).WithSupport(2).Build()
+                    fullRule: ItemSetTestBuilder.NewItemSet().WithItems(1,1).WithAbsoluteSupport(2).Build()
                     )
             };
 
