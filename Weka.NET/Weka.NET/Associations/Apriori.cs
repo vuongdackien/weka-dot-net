@@ -6,11 +6,7 @@
     using System.Text;
     using Weka.NET.Core;
     using Weka.NET.Utils;
-    
-    /// <summary>
-    /// Apriori algorithm is based on the following key property:
-    /// Every subset of a frequent / large item set is also a frequent / large
-    /// </summary>
+
     public interface IApriori
     {
         IList<AssociationRule> BuildAssociationRules(IDataSet dataSet);
@@ -20,9 +16,9 @@
     {
         readonly IItemSetBuilder itemSetBuilder;
 
-        readonly IRuleBuilder ruleBuilder;
+        readonly RuleBuilder ruleBuilder;
 
-        public Apriori(IItemSetBuilder iItemSetBuilder, IRuleBuilder ruleBuilder)
+        public Apriori(IItemSetBuilder iItemSetBuilder, RuleBuilder ruleBuilder)
         {
             this.itemSetBuilder = iItemSetBuilder;
             this.ruleBuilder = ruleBuilder;

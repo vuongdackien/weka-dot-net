@@ -1,52 +1,109 @@
-﻿using NUnit.Framework;
-using Weka.NET.Associations;
-using Weka.NET.Utils;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using NUnit.Framework;
+using Weka.NET.Associations;
+using Weka.NET.Core;
 
 namespace Weka.NET.Tests.Associations
 {
+    [TestFixture]
     public class ItemSetTest
     {
-
         [Test]
-        public void CanCompareDifferentItemSets()
+        public void TestingIfItemsContainsAnInstance()
         {
-            var someItemSet = ItemSetTestBuilder.NewItemSet().WithItems(null, 5).WithAnySupport().Build();
+            var items = new ItemSet(1d, 2d);
 
-            var anotherItemSet = ItemSetTestBuilder.NewItemSet().WithItems(5, null).WithAnySupport().Build();
+            var instance = new Instance(new List<double?>{1d, 2d});
 
-            Assert.IsFalse(someItemSet.Equals(anotherItemSet));
+            Assert.IsTrue(items.ContainedBy(instance));
         }
 
         [Test]
-        public void CanTestForIntersectingSets()
+        [ExpectedException(typeof(ArgumentException))]
+        public void CannotMergeItemsWithDifferentSize()
         {
-            var someItemSet = ItemSetTestBuilder.NewItemSet().WithItems(null, 5).WithAnySupport().Build();
+            var left = new ItemSet(new List<double?> { 1d, null, 1d });
 
-            var anotherItemSet = ItemSetTestBuilder.NewItemSet().WithItems(5, null).WithAnySupport().Build();
+            var right = new ItemSet(new List<double?> { null, 1d});
 
-            Assert.IsFalse(someItemSet.Intersects(anotherItemSet));
+            left.Union(right);
         }
 
         [Test]
-        public void CanCompareEquivalentItemSets()
+        public void IntersectingNonIntersectedItems()
         {
-            var sameItemSets = ItemSetTestBuilder.NewItemSet().WithItems(null, 5).WithAbsoluteSupport(0).BuildMany(2);
+            var left = new ItemSet(1d, null);
 
-            Assert.IsTrue(sameItemSets[0].Equals(sameItemSets[1]));
+            var right = new ItemSet(null, 2d);
+
+            Assert.AreEqual(0, left.IntersectsCount(right));
         }
 
         [Test]
-        public void ItemSetProperlyImplementsGetHashCodeAndEquals()
+        public void IntersectingIntersectedItems()
         {
-            var someHashSet = new HashSet<ItemSet>();
+            var left = new ItemSet(1d, null);
 
-            var sameItemSets = ItemSetTestBuilder.NewItemSet().WithItems(1, 2, 3).WithAbsoluteSupport(0).BuildMany(5);
+            var right = new ItemSet(1d, 1d);
 
-            someHashSet.AddAll(sameItemSets);
-
-            Assert.AreEqual(1, someHashSet.Count);
+            Assert.AreEqual(1, left.IntersectsCount(right));
         }
 
+        [Test]
+        public void IntersectingItemsThatDifferByValue()
+        {
+            var left = new ItemSet(1d, null);
+
+            var right = new ItemSet(2d, 1d);
+
+            Assert.AreEqual(0, left.IntersectsCount(right));
+        }
+
+
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void MergingOnlyWorksIfOneValueIsNull()
+        {
+            var left = new ItemSet(1d, null);
+
+            var right = new ItemSet(2d, null);
+
+            left.Union(right);
+        }
+
+        [Test]
+        public void CanMergeItemsWithTheSameSize()
+        {
+            var left = new ItemSet(new List<double?> { 1d, null, 1d });
+
+            var right = new ItemSet(new List<double?> { null, 1d, null });
+
+            Assert.AreEqual(new ItemSet(1d, 1d, 1d), left.Union(right));
+        }
+
+        [Test]
+        public void CanMergeOneItemSetWithItself()
+        {
+            var itemSet = new ItemSet(new List<double?> { 1d, null, 1d });
+
+            Assert.AreEqual(itemSet, itemSet.Union(itemSet));
+        }
+
+        [Test]
+        public void CanPutItemsInAHashSet()
+        {
+            var set = new HashSet<ItemSet>();
+
+            set.Add(new ItemSet(new List<double?> { 1d, 1d }));
+
+            set.Add(new ItemSet(new List<double?> { 1d, 1d }));
+
+            var removed = set.Remove(new ItemSet(new List<double?> { 1d, 1d }));
+
+            Assert.AreEqual(0, set.Count);
+        }
     }
 }

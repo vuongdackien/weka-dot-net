@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Weka.NET.Lang
+﻿namespace Weka.NET.Lang
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    
     public static class DoubleExt
     {
         readonly public static double SMALL = 1e-6;

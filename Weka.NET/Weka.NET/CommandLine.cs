@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Weka.NET.Associations;
 using Weka.NET.Core;
 using System.IO;
 using Weka.NET.Core.Parsers;
 using Weka.NET.Utils;
+using Weka.NET.Associations;
 
 namespace Weka.NET
 {
-
     public static class CommandLine
     {
         static Options options;
@@ -19,37 +18,17 @@ namespace Weka.NET
         {
             options = new Options();
             options.AddOption('t', true);
+            options.AddOption('M', false);
+            options.AddOption('C', false);
         }
-
 
         static void Main(string[] args)
         {
-            //Given
-            var dataSet = TestSets.WeatherNominal();
-
-            var builder = new ItemSetBuilder(.4);
-
-            var ruleBuilder = new RuleBuilder(.8);
-
-            var actual = new Apriori(builder, ruleBuilder);
-
-            var rules = actual.BuildAssociationRules(dataSet);
-
-        
-        }
-
-
-        static void Main2(string[] args)
-        {
- 
-
-
-
-          //  var apriori = new Apriori { MinSupport = 1, Delta = .05 };
-
-          //  var rules = apriori.BuildAssociationRules(Weka.NET.Utils.TestSets.WeatherNominal(), 10);
-
             var optionArgs = options.ParseArguments(args);
+
+            double minSupport = optionArgs.ContainsKey('M') ? double.Parse(optionArgs['M'].Argument) : .2;
+
+            double minConfidence = optionArgs.ContainsKey('C') ? double.Parse(optionArgs['C'].Argument) : .9; 
 
             if (false == optionArgs.ContainsKey('t'))
             {
@@ -58,19 +37,11 @@ namespace Weka.NET
 
             var dataSet = ParseDataSet(optionArgs['t'].Argument);
 
-            var d = from i in dataSet.Instances select i.ToString();
-
-
-
-           /* var apriori = new Apriori(.3);
+            var apriori = new Apriori(new ItemSetBuilder(minSupport), new RuleBuilder(minConfidence));
 
             var rules = apriori.BuildAssociationRules(dataSet);
 
-            Console.WriteLine("Generated Rules: ");
-            foreach (var rule in rules)
-            {
-                Console.WriteLine(rule.ToString());
-            }*/
+            DisplayRules(dataSet, rules);
         }
 
         public static DataSet ParseDataSet(string fileName)
@@ -78,6 +49,22 @@ namespace Weka.NET
             using (var stream = File.OpenRead(fileName))
             {
                 return new ArffParser().Parse(stream);
+            }
+        }
+
+        private static void DisplayRules(DataSet dataSet, IList<AssociationRule> rules)
+        {
+            Console.WriteLine("Rules found:");
+
+            int ruleCount = 0;
+
+            foreach (var r in rules)
+            {
+                ruleCount++;
+
+                var str = new AssociationRuleDisplay(dataSet.Attributes, r).ToDisplayString();
+
+                Console.WriteLine(ruleCount + ": " + str);
             }
         }
     }

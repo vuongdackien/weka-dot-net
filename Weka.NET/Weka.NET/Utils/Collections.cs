@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Weka.NET.Utils
+﻿namespace Weka.NET.Utils
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    
     public static class Collections
     {
         public static void AddAll<T>(this HashSet<T> hashSet, IEnumerable<T> elements)
@@ -13,6 +13,35 @@ namespace Weka.NET.Utils
             {
                 hashSet.Add(element);
             }
+        }
+
+        public static bool ListEquals<T>(this IList<T> list, IList<T> other)
+        {
+            if (list.Count != other.Count)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (list[i] == null) 
+                {
+                    if (other[i] != null)
+                    {
+                        return false;
+                    }
+
+                    continue;
+                }
+
+                if (false == list[i].Equals(other[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+
         }
 
         public static string ListToString<T>(this IList<T> list)
@@ -25,9 +54,5 @@ namespace Weka.NET.Utils
             return buff.ToString();
         }
 
-        internal static IList<Associations.AssociationRule> EmptyList<T1>()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

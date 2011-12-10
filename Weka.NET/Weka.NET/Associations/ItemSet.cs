@@ -1,53 +1,141 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using Weka.NET.Lang;
-using Weka.NET.Utils;
-using System.Diagnostics.Contracts;
-
-namespace Weka.NET.Associations
+﻿namespace Weka.NET.Associations
 {
+    using System;
+    using System.Linq;
+    using System.Collections.Generic;
+    using Weka.NET.Lang;
+    using Weka.NET.Utils;
+    using System.Diagnostics.Contracts;
+    using Weka.NET.Core;
+
     [Immutable]
-    public class ItemSet : IEquatable<ItemSet>
+    public sealed class ItemSet : IEquatable<ItemSet>
     {
-        public IList<double?> Items { get; private set; }
+        readonly IList<double?> values;
 
-        /// <summary>
-        /// Persent of transactions containing the items defined by this ItemSet object.
-        /// </summary>
-        public int Support { get; private set; }
+        public int Size { get; private set; }
 
-        public int Count { get; private set; }
+        public int Length { get { return values.Count; } }
+
+        public ItemSet(params double?[] values) : this(values.ToList())
+        {
+        }
+
+        public ItemSet(IList<double?> values)
+        {
+            this.values = new List<double?>(values);
+
+            Size = (from v in values where v.HasValue select v).Count();
+        }
 
         public double? this[int index]
         {
-            get { return Items[index]; }
+            get { return values[index]; }
         }
 
-        public ItemSet(IEnumerable<double?> items, int support)
+        public ItemSet Union(ItemSet other)
         {
-            Contract.Ensures(items != null);
+            if (values.Count != other.values.Count)
+            {
+                throw new ArgumentException("");
+            }
 
-            Items = items.ToList().AsReadOnly();
-            
-            Support = support;
+            var newValues = new double?[values.Count];
 
-            Count = (from i in items where i.HasValue select i).Count();
+            for(int i=0;i<other.values.Count;i++)
+            {
+                if (values[i].HasValue && false == other.values[i].HasValue)
+                {
+                    newValues[i] = values[i];
+                }
+
+                if (false == values[i].HasValue && other.values[i].HasValue)
+                {
+                    newValues[i] = other.values[i];
+                }
+
+                if (values[i].HasValue && other.values[i].HasValue)
+                {
+                    if (false == values[i].Equals(other.values[i]))
+                    {
+                        throw new ArgumentException("Can't union");
+                    }
+
+                    newValues[i] = other.values[i];
+                }
+            }
+
+            return new ItemSet(newValues);
         }
 
-        public bool Equals(ItemSet other)
+        public int IntersectsCount(ItemSet other)
         {
-            if (ReferenceEquals(null, other))
+            int intersects = 0;
+
+            for (int i = 0; i < values.Count; i++)
+            {
+                if (values[i].HasValue && other.values[i].HasValue
+                    && values[i].Equals(other.values[i]) )
+                {
+                    intersects++;
+                }
+            }
+
+            return intersects;
+        }
+
+        public bool IsIntersecteable(ItemSet other)
+        {
+            if (values.Count != other.values.Count)
             {
                 return false;
             }
 
-            if (ReferenceEquals(this, other))
+            for (int i = 0; i < other.values.Count; i++)
             {
-                return true;
+                if (values[i].HasValue && false == other.values[i].HasValue)
+                {
+                    continue;
+                }
+
+                if (false == values[i].HasValue && other.values[i].HasValue)
+                {
+                    continue;
+                }
+
+                if (values[i].HasValue && other.values[i].HasValue && false == values[i].Equals(other.values[i]))
+                {
+                    return false;
+                }
             }
 
-            return other.Count == Count && Support == other.Support && Arrays.AreEquals(other.Items, Items);
+            return true;
+        }
+
+        public bool ContainedBy(Instance instance)
+        {
+            for (int i = 0; i < values.Count; i++)
+            {
+                if (values[i].HasValue)
+                {
+                    if (false == instance[i].HasValue)
+                    {
+                        return false;
+                    }
+
+                    if (values[i] != instance[i])
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+
+        public bool Equals(ItemSet other)
+        {
+            return values.ListEquals(other.values);
         }
 
         public override bool Equals(object other)
@@ -74,58 +162,14 @@ namespace Weka.NET.Associations
         {
             unchecked
             {
-                return (Count * 397) ^ (Items != null ? Arrays.GetHashCodeForArray(Items) : 0);
+                return Arrays.GetHashCodeForArray(values);
             }
         }
 
         public override string ToString()
         {
-            return string.Format("ItemSet[Size: {0}, Items: {1}]", Count, Arrays.ArrayToString(Items));
+            return "Items[Size= " + Size + ", values=" + values.ListToString() + "]";
         }
 
-        public bool Intersects(ItemSet other)
-        {
-            for (int i = 0; i < Items.Count; i++)
-            {
-                if (Items[i].HasValue && other.Items[i].HasValue)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public IList<double?> MergeItems(ItemSet itemSet)
-        {
-
-
-            var newItems = new List<double?>();
-
-            for (int i = 0; i < itemSet.Items.Count; i++)
-            {
-                if (Items[i] == null && itemSet[i] != null)
-                {
-                    newItems.Add(itemSet[i]);
-                }
-
-                if (Items[i] != null && itemSet[i] == null)
-                {
-                    newItems.Add(Items[i]);
-                }
-
-                if (Items[i] == null && itemSet[i] == null)
-                {
-                    newItems.Add(null);
-                }
-
-                if (Items[i] != null && itemSet[i] != null && false == Items[i].Value.Equals(itemSet[i].Value))
-                {
-                    throw new ArgumentException("can't merge");
-                }
-            }
-
-            return newItems;
-        }
     }
 }

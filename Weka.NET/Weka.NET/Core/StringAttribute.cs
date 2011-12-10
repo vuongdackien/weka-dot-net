@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Weka.NET.Core
+﻿namespace Weka.NET.Core
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    
     public class StringAttribute : Weka.NET.Core.Attribute
     {
         public StringAttribute(string name, int index) : base(name, index)

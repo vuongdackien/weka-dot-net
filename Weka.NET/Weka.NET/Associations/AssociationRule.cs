@@ -1,58 +1,77 @@
-﻿namespace Weka.NET.Associations
-{
-    using System;
-    using System.Text;
-    using Weka.NET.Lang;
-    
-    [Immutable]
-    public class AssociationRule : IEquatable<AssociationRule>
-    {
-        public ItemSet FullRule { get; private set; }
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Weka.NET.Lang;
+using Weka.NET.Core;
 
+namespace Weka.NET.Associations
+{
+    [Immutable]
+    public class AssociationRule
+    {
         public ItemSet Premisse { get; private set; }
 
-        public ItemSet Consequence {get; private set;}
+        public ItemSet Consequence { get; private set; }
 
-        public double Confidence { get { return (double)FullRule.Support / (double)Premisse.Support; } }
+        public double Confidence { get; private set; }
 
-        /// <summary>
-        /// Support of LHS Union RHS
-        /// </summary>
-        public double Support { get { return FullRule.Support; } }
-
-        public AssociationRule(ItemSet premisse, ItemSet consequence, ItemSet fullRule)
+        public AssociationRule(ItemSet premisse, ItemSet consequence, double confidence)
         {
-            this.Premisse = premisse;
-            this.Consequence = consequence;
-            this.FullRule = fullRule;
+            Premisse = premisse;
+            Consequence = consequence;
+            Confidence = confidence;
+        }
+    }
+
+    public class AssociationRuleDisplay : IDisplayable
+    {
+        readonly AssociationRule rule;
+
+        readonly IList<Core.Attribute> attributes;
+
+        public AssociationRuleDisplay(IList<Core.Attribute> attributes, AssociationRule rule)
+        {
+            this.attributes = attributes;
+            this.rule = rule;
         }
 
-        public override int GetHashCode()
+        public string ToDisplayString()
         {
-            return 37 * Premisse.GetHashCode() ^ Consequence.GetHashCode() ^ Confidence.GetHashCode();
+            var buff = new StringBuilder("IF ");
+
+            DisplayItemSet(buff, rule.Premisse);
+
+            buff.Append(" THEN ");
+
+            DisplayItemSet(buff, rule.Consequence);
+
+            buff.Append(" [Confidence=").Append(rule.Confidence).Append("]");
+
+            return buff.ToString();
         }
 
-        public bool Equals(AssociationRule other)
+        private void DisplayItemSet(StringBuilder buff, ItemSet items)
         {
-            return
-                Premisse.Equals(other.Premisse)
-                && Consequence.Equals(other.Consequence)
-                && Confidence.Equals(other.Confidence);
-        }
+            bool first = true;
 
-        public override bool Equals(object other)
-        {
-            var otherRule = other as AssociationRule;
+            for (int i = 0; i < items.Length; i++)
+            {
+                if (false == items[i].HasValue)
+                {
+                    continue;
+                }
 
-            return Equals(otherRule);
-        }
+                if (first == false)
+                {
+                    buff.Append(" AND ");
+                }
 
-        public override string ToString()
-        {
-            return "AssociationRule[Premisse=" + Premisse.ToString()
-                + ", Consequence=" + Consequence.ToString()
-                + ", Confidence: " + Confidence
-                + ", Support: " + Support + "]";
+                buff.Append(attributes[i].Name).Append("=").Append(attributes[i].Decode(items[i]));
+
+                first = false;
+            }
+
         }
     }
 }

@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Weka.NET.Core;
-
-namespace Weka.NET.Core
+﻿namespace Weka.NET.Core
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using Weka.NET.Core;
+    
     public interface IDataSetBuilder
     {
         IDataSetBuilder WithRelationName(string name);

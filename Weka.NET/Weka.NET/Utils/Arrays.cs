@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Weka.NET.Utils
+﻿namespace Weka.NET.Utils
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    
     public static class Arrays
     { 
-
         public static bool ArrayEquals(double?[] left, double?[] right)
         {
             if (left.Length != right.Length)

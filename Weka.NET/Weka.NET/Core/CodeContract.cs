@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Weka.NET.Core
+﻿namespace Weka.NET.Core
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    
     public class CodeContract
     {
         internal static void NotSupportedNumericAttributes(IList<Attribute> attributes)

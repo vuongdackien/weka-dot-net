@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Weka.NET.Core
+﻿namespace Weka.NET.Core
 {
+    using System;
+    
     public abstract class Attribute
     {
         public string Name { get; private set; }

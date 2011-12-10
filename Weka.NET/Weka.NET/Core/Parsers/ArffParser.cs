@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Text.RegularExpressions;
-
-namespace Weka.NET.Core.Parsers
+﻿namespace Weka.NET.Core.Parsers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.IO;
+    using System.Text.RegularExpressions;
+    
     public interface IArffParser
     {
         DataSet Parse(Stream stream);

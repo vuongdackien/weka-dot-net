@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Weka.NET
+﻿namespace Weka.NET
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+
     struct OptionArgument
     {
         public char ShortIdentifier { set; get; }
@@ -34,7 +34,28 @@ namespace Weka.NET
                     i++;
 
                     optionArgs['t'] = new OptionArgument{ShortIdentifier='t', Argument=args[i]};
+
+                    continue;
                 }
+
+                if (args[i].Equals("-M"))
+                {
+                    i++;
+
+                    optionArgs['M'] = new OptionArgument { ShortIdentifier = 'M', Argument = args[i] };
+
+                    continue;
+                }
+
+                if (args[i].Equals("-C"))
+                {
+                    i++;
+
+                    optionArgs['C'] = new OptionArgument { ShortIdentifier = 'C', Argument = args[i] };
+
+                    continue;
+                }
+
             }
 
             return optionArgs;

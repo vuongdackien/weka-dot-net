@@ -1,8 +1,8 @@
-﻿using Weka.NET.Lang;
-using NUnit.Framework;
-
-namespace Weka.NET.Tests.Lang
+﻿namespace Weka.NET.Tests.Lang
 {
+    using Weka.NET.Lang;
+    using NUnit.Framework;
+    
     [TestFixture]
     public class DoubleExtTest
     {

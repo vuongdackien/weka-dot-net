@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NUnit.Framework;
-using Weka.NET.Core.Parsers;
-using System.IO;
-using Weka.NET.Core;
-using Moq;
-
-namespace Weka.NET.Tests.Core.Parser
+﻿namespace Weka.NET.Tests.Core.Parser
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using NUnit.Framework;
+    using Weka.NET.Core.Parsers;
+    using System.IO;
+    using Weka.NET.Core;
+    using Moq;
+
     [TestFixture]
     public class ArffParserTest
     {

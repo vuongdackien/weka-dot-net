@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Weka.NET.Utils;
-
-namespace Weka.NET.Associations
+﻿namespace Weka.NET.Associations
 {
+    using System.Collections.Generic;
+    using System;
+    
     public interface IRuleBuilder
     {
         double MinConfidence { get; }
 
-        IList<AssociationRule> BuildRules(IDictionary<int, IList<ItemSet>> itemSets);
+        IList<AssociationRule> BuildRules(IDictionary<ItemSet, int> supportByItems);
     }
 
     public class RuleBuilder : IRuleBuilder
@@ -22,56 +19,46 @@ namespace Weka.NET.Associations
             MinConfidence = minConfidence;
         }
 
-        public IList<AssociationRule> BuildRules(IDictionary<int, IList<ItemSet>> itemSets)
-        {
-            var rules = new HashSet<AssociationRule>();
-
-            if (itemSets.Count < 2)
-            {
-                return rules.ToList().AsReadOnly();
-            }
-
-            for (int size = 2; size <= itemSets.Count; size++)
-            {
-                foreach (var candidateRule in itemSets[size])
-                {
-                    var candidates = BuildRules(candidateRule, itemSets[size - 1]);
-
-                    rules.AddAll(candidates);
-                }
-            }
-
-            var prunned = rules.Where(r => r.Confidence > MinConfidence);
-
-            return prunned.ToList().AsReadOnly();
-        }
-
-        public IList<AssociationRule> BuildRules(ItemSet fullRule, IList<ItemSet> itemSets)
+        public IList<AssociationRule> BuildRules(IDictionary<ItemSet, int> supportByItems)
         {
             var rules = new List<AssociationRule>();
 
-            for (int i = 0; i < itemSets.Count; i++)
+            foreach (var left in supportByItems.Keys)
             {
-                for (int j = 0; j < itemSets.Count; j++)
+                foreach (var right in supportByItems.Keys)
                 {
-                    if (false == itemSets[i].Intersects(itemSets[j]))
+                    if (left == right) continue;
+
+                    if (false == left.IsIntersecteable(right)) continue;
+
+                    if (false == supportByItems.ContainsKey(left.Union(right))) continue;
+
+                    if (left.IntersectsCount(right) > 0) continue;
+
+                    var candidate = BuildRule(left, right, supportByItems);
+
+                    if (candidate.Confidence >= MinConfidence)
                     {
-                        var mergeItems = itemSets[i].MergeItems(itemSets[j]);
-
-                        if (Arrays.AreEquals(fullRule.Items, mergeItems))
-                        {
-                            rules.Add(new AssociationRule(premisse: itemSets[i], consequence: itemSets[j], fullRule: fullRule));
-
-                            rules.Add(new AssociationRule(premisse: itemSets[j], consequence: itemSets[i], fullRule: fullRule));
-
-                            return rules;
-                        }
+                        rules.Add(candidate);
                     }
-
                 }
             }
 
             return rules;
+        }
+
+        public double CalculateConfidence(int fullRuleSupport, int premisseSupport)
+        {
+            return (double)fullRuleSupport / (double)premisseSupport;
+        }
+
+        public AssociationRule BuildRule(ItemSet left, ItemSet right, IDictionary<ItemSet, int> supportByItems)
+        {
+            int necFullSupport = supportByItems[left.Union(right)];
+
+            double confidence = CalculateConfidence(necFullSupport, supportByItems[left]);
+
+            return new AssociationRule(premisse: left, consequence: right, confidence: confidence);
         }
     }
 }

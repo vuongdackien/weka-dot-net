@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Weka.NET.Core;
-
-namespace Weka.NET.Utils
+﻿namespace Weka.NET.Utils
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using Weka.NET.Core;
+    
     public static class TestSets
     {
         public static DataSet BooleanDataSet()

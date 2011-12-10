@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System;
-using System.Text;
-
-namespace Weka.NET.Core
+﻿namespace Weka.NET.Core
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System;
+    using System.Text;
+    
     public interface IDataSet
     {
         string Name { get; }

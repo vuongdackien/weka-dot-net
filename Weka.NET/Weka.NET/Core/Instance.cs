@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Weka.NET.Core
+﻿namespace Weka.NET.Core
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    
     public sealed class Instance
     {
         public IList<double?> Values { get; private set; }

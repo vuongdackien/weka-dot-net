@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Weka.NET.Core;
-using Weka.NET.Utils;
-
-namespace Weka.NET.Associations
+﻿namespace Weka.NET.Associations
 {
+    using Weka.NET.Utils;
+    using Weka.NET.Lang;
+    using System.Collections.Generic;
+    using System;
+    using System.Linq;
+    using Weka.NET.Core;
+    
     public interface IItemSetBuilder
     {
-        IDictionary<int, IList<ItemSet>> BuildItemSets(IDataSet dataSet);
+        IDictionary<ItemSet, int> BuildItemSets(IDataSet dataSet);
     }
 
     public class ItemSetBuilder : IItemSetBuilder
@@ -26,150 +26,121 @@ namespace Weka.NET.Associations
             MinSupport = minSupport;
         }
 
-        public IList<ItemSet> BuildSingletons(IDataSet dataSet)
+        public IDictionary<ItemSet, int> BuildItemSets(IDataSet dataSet)
         {
-            var singletons = new List<ItemSet>();
+            int necSupport = (int)(MinSupport * dataSet.Count);
 
-            for (int attributeIndex = 0; attributeIndex < dataSet.Attributes.Count; attributeIndex++)
-            {
-                var values = (dataSet.Attributes[attributeIndex] as NominalAttribute).Values;
+            Console.WriteLine("Building ItemStets with necSupport={0}", necSupport);
 
-                for (int valueIndex = 0; valueIndex < values.Length; valueIndex++)
-                {
-                    var items = new double?[dataSet.Attributes.Count];
+            var supportByItems = BuildAndPruneSingletons(dataSet, necSupport);
 
-                    items[attributeIndex] = valueIndex;
+            var itemsBySize = new Dictionary<int, HashSet<ItemSet>>();
 
-                    int support = CountSupportFor(dataSet, items);
+            itemsBySize[1] = new HashSet<ItemSet>();
+            
+            itemsBySize[1].AddAll(supportByItems.Keys.ToList());
 
-                    var itemSet = new ItemSet(items: items, support: support);
+            RecursivelyBuildItems(1, itemsBySize, supportByItems, dataSet, necSupport);
 
-                    singletons.Add(itemSet);
-                }
-            }
-
-            return singletons;
+            return supportByItems;
         }
 
-        public int CountSupportFor(IDataSet dataSet, double?[] items)
-        {
-            int support = 0;
-
-            foreach (var instance in dataSet.Instances)
-            {
-                if (ContainedBy(instance, items))
-                {
-                    support++;
-                }
-            }
-
-            return support;
-        }
-
-        internal bool ContainedBy(Instance instance, double?[] items)
-        {
-            for (int i = 0; i < items.Length; i++)
-            {
-                if (items[i].HasValue)
-                {
-                    if (false == instance[i].HasValue)
-                    {
-                        return false;
-                    }
-
-                    if (items[i] != instance[i])
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-
-        public IList<ItemSet> MergeRightAgainstLeft(IDataSet dataSet, ItemSet first, ItemSet second)
-        {
-            var newItemSets = new List<ItemSet>();
-
-            for (int i = 0; i < first.Items.Count; i++)
-            {
-                if (first[i].HasValue)
-                {
-                    continue;
-                }
-
-                if (false == second[i].HasValue)
-                {
-                    continue;
-                }
-
-                double?[] newItems = new double?[first.Items.Count];
-
-                first.Items.CopyTo(newItems, 0);
-
-                newItems[i] = second[i];
-
-                int support = CountSupportFor(dataSet, newItems);
-
-                newItemSets.Add(new ItemSet(items: newItems, support:support));
-            }
-
-            return newItemSets;
-        }
-
-        public IList<ItemSet> CombineItemSets(IDataSet dataSet, IList<ItemSet> itemSets)
+        public void RecursivelyBuildItems(int actualSize, Dictionary<int, HashSet<ItemSet>> itemsBySize, IDictionary<ItemSet, int> supportByItems, IDataSet dataSet, int necSupport)
         {
             var newItemSets = new HashSet<ItemSet>();
 
-            for (int i = 0; i < itemSets.Count; i++)
-            {
-                for (int j = 0; j < itemSets.Count; j++)
-                {
-                    var mergedItems = MergeRightAgainstLeft(dataSet, itemSets[i], itemSets[j]);
+            int intersectSize = actualSize - 1;
 
-                    newItemSets.AddAll(mergedItems);
+            foreach (var left in itemsBySize[actualSize])
+            {
+                foreach (var right in itemsBySize[actualSize])
+                {
+                    if (left == right) continue;
+
+                    if (left.IsIntersecteable(right) && left.IntersectsCount(right) == intersectSize)
+                    {
+                        var newItems = left.Union(right);
+
+                        int newItemsSupport = CalculateSupport(newItems, dataSet);
+
+                        if (newItemsSupport < necSupport)
+                        {
+                            continue;
+                        }
+
+                        newItemSets.Add(newItems);
+
+                        supportByItems[newItems] = newItemsSupport;
+                    }
                 }
             }
 
-            return newItemSets.ToList();
+            if (newItemSets.Count == 0)
+            {
+                return;
+            }
+                
+            itemsBySize[actualSize+1] = newItemSets;
+
+            RecursivelyBuildItems(actualSize + 1, itemsBySize, supportByItems, dataSet, necSupport);
         }
 
-        public IDictionary<int, IList<ItemSet>> BuildItemSets(IDataSet dataSet)
+        public int CalculateSupport(ItemSet items, IDataSet dataSet)
         {
-            //count == 1
-            // x    == .2
+            int count = 0;
 
-            //.2 * count
-            
-            
-            int necSupport = (int)(MinSupport * (double)dataSet.Count);
-
-            var itemSetsByCount = new Dictionary<int, IList<ItemSet>>();
-
-            int currentSize = 1;
-
-            var singletons = BuildSingletons(dataSet);
-
-            itemSetsByCount[currentSize] = Prune(singletons, necSupport);
-
-            while (itemSetsByCount[currentSize].Count > 0)
+            foreach (var instance in dataSet.Instances)
             {
-                var nextItemSets = CombineItemSets(dataSet, itemSetsByCount[currentSize]);
-
-                var prunnedNextItemSets = Prune(nextItemSets, necSupport);
-
-                currentSize++;
-
-                itemSetsByCount[currentSize] = prunnedNextItemSets;
+                if (items.ContainedBy(instance))
+                {
+                    count++;
+                }
             }
 
-            return itemSetsByCount;
+            return count;
         }
 
-        public IList<ItemSet> Prune(IList<ItemSet> toPrune, int necSupport)
+        public IDictionary<ItemSet, int> BuildAndPruneSingletons(IDataSet dataSet, int necSupport)
         {
-            var prunned = toPrune.Where(item => item.Support > necSupport);
+            var singletons = BuildSingletonItems(dataSet);
 
-            return prunned.ToList();
+            var supportByItems = new Dictionary<ItemSet, int>();
+
+            foreach (var singleton in singletons)
+            {
+                int support = CalculateSupport(singleton, dataSet);
+
+                if (support < necSupport)
+                {
+                    continue;
+                }
+
+                supportByItems[singleton] = support;
+            }
+
+            return supportByItems;
+        }
+
+        public HashSet<ItemSet> BuildSingletonItems(IDataSet dataSet)
+        {
+            var singletons = new HashSet<ItemSet>();
+
+            for (int attributeIndex = 0; attributeIndex < dataSet.Attributes.Count; attributeIndex++)
+            {
+                var attributeValues = (dataSet.Attributes[attributeIndex] as NominalAttribute).Values;
+
+                for (int valueIndex = 0; valueIndex < attributeValues.Length; valueIndex++)
+                {
+                    var values = new double?[dataSet.Attributes.Count];
+
+                    values[attributeIndex] = valueIndex;
+
+                    var items = new ItemSet(values);
+
+                    singletons.Add(items);
+                }
+            }
+            return singletons;
         }
     }
 }
