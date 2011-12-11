@@ -6,19 +6,21 @@
     using System.Text;
     using Weka.NET.Core;
     using Weka.NET.Utils;
+    using Weka.NET.Lang;
 
     public interface IApriori
     {
         IList<AssociationRule> BuildAssociationRules(IDataSet dataSet);
     }
 
+    [OptionArgument('M', "Set minimum support")]
     public class Apriori : IApriori
     {
         readonly IItemSetBuilder itemSetBuilder;
 
-        readonly RuleBuilder ruleBuilder;
+        readonly IRuleBuilder ruleBuilder;
 
-        public Apriori(IItemSetBuilder iItemSetBuilder, RuleBuilder ruleBuilder)
+        public Apriori(IItemSetBuilder iItemSetBuilder, IRuleBuilder ruleBuilder)
         {
             this.itemSetBuilder = iItemSetBuilder;
             this.ruleBuilder = ruleBuilder;

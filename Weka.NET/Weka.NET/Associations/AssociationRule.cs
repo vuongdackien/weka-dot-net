@@ -8,7 +8,8 @@ using Weka.NET.Core;
 namespace Weka.NET.Associations
 {
     [Immutable]
-    public class AssociationRule
+    [Serializable]
+    public class AssociationRule : IEquatable<AssociationRule>
     {
         public ItemSet Premisse { get; private set; }
 
@@ -21,6 +22,41 @@ namespace Weka.NET.Associations
             Premisse = premisse;
             Consequence = consequence;
             Confidence = confidence;
+        }
+
+        public bool Equals(AssociationRule other)
+        {
+            return Premisse.Equals(other.Premisse)
+                && Consequence.Equals(other.Consequence)
+                && Confidence.Equals(other.Confidence);
+        }
+
+        public override bool Equals(object other)
+        {
+            if (ReferenceEquals(null, other))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            if (other.GetType() != typeof(AssociationRule))
+            {
+                return false;
+            }
+
+            return Equals(other as AssociationRule);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return 13 ^ Premisse.GetHashCode() ^ Consequence.GetHashCode();
+            }
         }
     }
 

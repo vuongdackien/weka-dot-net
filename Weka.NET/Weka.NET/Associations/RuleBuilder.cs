@@ -47,7 +47,7 @@
             return rules;
         }
 
-        public double CalculateConfidence(int fullRuleSupport, int premisseSupport)
+        public static double CalculateConfidence(int fullRuleSupport, int premisseSupport)
         {
             return (double)fullRuleSupport / (double)premisseSupport;
         }

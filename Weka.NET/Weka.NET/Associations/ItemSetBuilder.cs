@@ -28,7 +28,7 @@
 
         public IDictionary<ItemSet, int> BuildItemSets(IDataSet dataSet)
         {
-            int necSupport = (int)(MinSupport * dataSet.Count);
+            int necSupport = (int) Math.Round(MinSupport * dataSet.Count, MidpointRounding.AwayFromZero);
 
             Console.WriteLine("Building ItemStets with necSupport={0}", necSupport);
 

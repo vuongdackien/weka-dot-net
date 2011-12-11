@@ -9,6 +9,7 @@
     using Weka.NET.Core;
 
     [Immutable]
+    [Serializable]
     public sealed class ItemSet : IEquatable<ItemSet>
     {
         readonly IList<double?> values;

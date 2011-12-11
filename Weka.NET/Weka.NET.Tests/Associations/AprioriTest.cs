@@ -26,11 +26,23 @@
             ruleBuilder = new Mock<IRuleBuilder>();
 
             dataSet = new Mock<IDataSet>();
+
+            apriori = new Apriori(itemSetBuilder.Object, ruleBuilder.Object);
         }
 
         [Test]
         public void AprioriFirstRequestItemSetBuilderToBuildItemSetsWithHighSupportAndThenBuildTheRules()
         {
+            //Given
+            var supportByItems = new Dictionary<ItemSet, int>();
+
+            itemSetBuilder.Setup(b => b.BuildItemSets(It.IsAny<IDataSet>())).Returns(supportByItems);
+
+            //When
+            apriori.BuildAssociationRules(dataSet.Object);
+
+            //Then
+            ruleBuilder.Verify(r => r.BuildRules(supportByItems), Times.Once());
         }
 
     }
