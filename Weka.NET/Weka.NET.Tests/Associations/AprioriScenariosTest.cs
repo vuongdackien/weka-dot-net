@@ -43,7 +43,7 @@ namespace Weka.NET.Tests.Associations
             //Given
             var dataSet = TestSets.WeatherNominal();
 
-            var apriori = new Apriori(new ItemSetBuilder(minSupport: 0.75), new RuleBuilder(minConfidence: .9));
+            var apriori = new Apriori(new ItemSetBuilder(minSupport: 0.2), new RuleBuilder(minConfidence: .9));
 
             //When
             var rules = apriori.BuildAssociationRules(dataSet);
