@@ -42,7 +42,7 @@
             apriori.BuildAssociationRules(dataSet.Object);
 
             //Then
-            ruleBuilder.Verify(r => r.BuildRules(supportByItems), Times.Once());
+            ruleBuilder.Verify(r => r.BuildRules(dataSet.Object, supportByItems), Times.Once());
         }
 
     }

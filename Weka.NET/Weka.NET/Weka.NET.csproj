@@ -54,6 +54,11 @@
     <Compile Include="Lang\DoubleExt.cs" />
     <Compile Include="Lang\ImmutableAttribute.cs" />
     <Compile Include="Lang\NonThreadSafe.cs" />
+    <Compile Include="Text\ITokenizer.cs" />
+    <Compile Include="Text\IWordDictionary.cs" />
+    <Compile Include="Text\Stemmers\Stemmer.cs" />
+    <Compile Include="Text\StopWordsList.cs" />
+    <Compile Include="Text\StringToVector.cs" />
     <Compile Include="Utils\OptionArgumentAttribute.cs" />
     <Compile Include="Utils\Arrays.cs" />
     <Compile Include="Classifiers\IClassifier.cs" />

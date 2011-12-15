@@ -2,12 +2,13 @@
 {
     using System.Collections.Generic;
     using System;
+    using Weka.NET.Core;
     
     public interface IRuleBuilder
     {
         double MinConfidence { get; }
 
-        IList<AssociationRule> BuildRules(IDictionary<ItemSet, int> supportByItems);
+        IList<AssociationRule> BuildRules(IDataSet dataSet, IDictionary<ItemSet, int> supportByItems);
     }
 
     public class RuleBuilder : IRuleBuilder
@@ -19,7 +20,7 @@
             MinConfidence = minConfidence;
         }
 
-        public IList<AssociationRule> BuildRules(IDictionary<ItemSet, int> supportByItems)
+        public IList<AssociationRule> BuildRules(IDataSet dataSet, IDictionary<ItemSet, int> supportByItems)
         {
             var rules = new List<AssociationRule>();
 
@@ -35,7 +36,7 @@
 
                     if (left.IntersectsCount(right) > 0) continue;
 
-                    var candidate = BuildRule(left, right, supportByItems);
+                    var candidate = BuildRule(left, right, dataSet, supportByItems);
 
                     if (candidate.Confidence >= MinConfidence)
                     {
@@ -47,18 +48,43 @@
             return rules;
         }
 
-        public static double CalculateConfidence(int fullRuleSupport, int premisseSupport)
-        {
-            return (double)fullRuleSupport / (double)premisseSupport;
-        }
-
-        public AssociationRule BuildRule(ItemSet left, ItemSet right, IDictionary<ItemSet, int> supportByItems)
+        public AssociationRule BuildRule(ItemSet left, ItemSet right, IDataSet dataSet, IDictionary<ItemSet, int> supportByItems)
         {
             int necFullSupport = supportByItems[left.Union(right)];
 
-            double confidence = CalculateConfidence(necFullSupport, supportByItems[left]);
+            double confidence = CalculateConfidence(left.Union(right), left, supportByItems);
 
-            return new AssociationRule(premisse: left, consequence: right, confidence: confidence);
+            double ruleSupport = CalculateSupportProbability(left.Union(right), dataSet, supportByItems);
+
+            double lift = CalculateLift(left, right, dataSet, supportByItems);
+
+            return new AssociationRule(premisse: left, consequence: right, confidence: confidence, support: ruleSupport, lift: lift);
         }
+
+        public double CalculateSupportProbability(ItemSet fullRule, IDataSet dataSet, IDictionary<ItemSet, int> supportByItems)
+        {
+            var fullRuleSupport = (double)supportByItems[fullRule];
+
+            return fullRuleSupport / dataSet.Count;
+        }
+
+        public double CalculateConfidence(ItemSet fullRule, ItemSet premisse, IDictionary<ItemSet, int> supportByItems)
+        {
+            var fullRuleSupport = (double) supportByItems[fullRule];
+
+            var premisseSupport = (double)supportByItems[premisse];
+
+            return fullRuleSupport / (double)premisseSupport;
+        }
+
+        public double CalculateLift(ItemSet premisse, ItemSet consequence, IDataSet dataSet, IDictionary<ItemSet, int> supportByItems)
+        {
+            var premisseProbability = CalculateSupportProbability(premisse, dataSet, supportByItems);
+
+            var consequenceProbability = CalculateSupportProbability(consequence, dataSet, supportByItems);
+
+            return 1 / Math.Max(premisseProbability, consequenceProbability);
+        }
+
     }
 }

@@ -30,7 +30,7 @@
         {
             var itemSets = itemSetBuilder.BuildItemSets(dataSet);
 
-            var rules = ruleBuilder.BuildRules(itemSets);
+            var rules = ruleBuilder.BuildRules(dataSet, itemSets);
 
             return rules;
         }

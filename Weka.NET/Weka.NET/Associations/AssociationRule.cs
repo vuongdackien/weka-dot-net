@@ -17,17 +17,25 @@ namespace Weka.NET.Associations
 
         public double Confidence { get; private set; }
 
-        public AssociationRule(ItemSet premisse, ItemSet consequence, double confidence)
+        public double Support {get; private set;}
+
+        public double Lift { get; private set; }
+
+        public AssociationRule(ItemSet premisse, ItemSet consequence, double confidence, double support, double lift)
         {
             Premisse = premisse;
             Consequence = consequence;
             Confidence = confidence;
+            Support = support;
+            Lift = lift;
         }
 
         public bool Equals(AssociationRule other)
         {
             return Premisse.Equals(other.Premisse)
                 && Consequence.Equals(other.Consequence)
+                && Support.Equals(other.Support)
+                && Lift.Equals(other.Lift)
                 && Confidence.Equals(other.Confidence);
         }
 
@@ -55,8 +63,20 @@ namespace Weka.NET.Associations
         {
             unchecked
             {
-                return 13 ^ Premisse.GetHashCode() ^ Consequence.GetHashCode();
+                return 13 ^ Premisse.GetHashCode()
+                    ^ Consequence.GetHashCode()
+                    ^ Support.GetHashCode()
+                    ^ Lift.GetHashCode()
+                    ;
+
             }
+        }
+
+        public override string ToString()
+        {
+            return
+                "Premisse=[" + Premisse + "], Consequence=[" + Consequence + "]"
+                + ", Confidence=[" + Confidence + "], Lift=[" + Lift + "], Support=[" + Support + "]";
         }
     }
 
@@ -82,7 +102,8 @@ namespace Weka.NET.Associations
 
             DisplayItemSet(buff, rule.Consequence);
 
-            buff.Append(" [Confidence=").Append(rule.Confidence).Append("]");
+            buff.Append(" [Confidence=").Append(rule.Confidence).Append(", Support=");
+            buff.Append(rule.Support).Append(", Lift=").Append(rule.Lift).Append("]");
 
             return buff.ToString();
         }

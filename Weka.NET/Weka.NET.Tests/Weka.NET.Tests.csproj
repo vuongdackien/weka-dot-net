@@ -57,6 +57,7 @@
     <Compile Include="Core\Parser\ArffParserTest.cs" />
     <Compile Include="Lang\DoubleExtTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Text\StringToVectorTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Weka.NET\Weka.NET.csproj">
