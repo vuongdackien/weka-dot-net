@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Text;
     using Weka.NET.Core;
+    using System.IO;
     
     public interface IDataSetBuilder
     {
@@ -15,6 +16,10 @@
         IDataSetBuilder WithNominalAttribute(string name, string[] values);
 
         IDataSetBuilder AddData(string[] values);
+
+        IDataSetBuilder WithStringAttribute(string name);
+
+        StreamReader BuildAsStreamReader();
 
         DataSet Build();
     }
@@ -96,7 +101,10 @@
             return new DataSet(name:relationName, attributes: attributes, instances: instances);
         }
 
-
+        public StreamReader BuildAsStreamReader()
+        {
+            throw new NotImplementedException();
+        }
 
 
     }

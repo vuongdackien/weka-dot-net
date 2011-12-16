@@ -58,7 +58,7 @@
     <Compile Include="Text\IWordDictionary.cs" />
     <Compile Include="Text\Stemmers\Stemmer.cs" />
     <Compile Include="Text\StopWordsList.cs" />
-    <Compile Include="Text\StringToVector.cs" />
+    <Compile Include="Filters\Unsupervised\Attribute\StringToVector.cs" />
     <Compile Include="Utils\OptionArgumentAttribute.cs" />
     <Compile Include="Utils\Arrays.cs" />
     <Compile Include="Classifiers\IClassifier.cs" />
