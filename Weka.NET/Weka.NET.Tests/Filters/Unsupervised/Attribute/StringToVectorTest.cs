@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using Weka.NET.Core;
 using Weka.NET.Filters.Unsupervised.Attribute;
+using System.IO;
 
 namespace Weka.NET.Tests.Filters.Unsupervised.Attribute
 {
@@ -12,15 +13,17 @@ namespace Weka.NET.Tests.Filters.Unsupervised.Attribute
         public void CanTransformStringAttribute()
         {
             //Given
-            var dataSetReader = DataSetBuilder.AnyDataSet().WithRelationName("string_to_numeric_test")
+            var dataSet = DataSetBuilder.AnyDataSet().WithRelationName("string_to_numeric_test")
                 .WithStringAttribute("Document")
-                .AddData(new[] { "'Hello World World'" })
-                .AddData(new[] { "'Hello Hello'" })
-                    .BuildAsStreamReader();
+                .AddInstance(new[] { "'Hello World World'" })
+                .AddInstance(new[] { "'Hello Hello'" })
+                    .Build();
 
             //When
-            var filteredReader = new StringToVector().Filter(dataSetReader);
+            var actual = new StringToVector().Filter(dataSet);
 
+            var expected = DataSetBuilder.AnyDataSet().WithRelationName("")
+                .Build();
         }
     }
 }

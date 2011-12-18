@@ -3,6 +3,7 @@
     using Weka.NET.Text;
     using Weka.NET.Text.Stemmers;
     using System.IO;
+    using Weka.NET.Core;
 
     public interface IStringToVector
     {
@@ -29,7 +30,7 @@
 
         public int MinTermFrequency { get; private set; }
 
-        public Stream Filter(System.IO.StreamReader dataSetReader)
+        public IDataSet Filter(Core.DataSet dataSet)
         {
             throw new System.NotImplementedException();
         }

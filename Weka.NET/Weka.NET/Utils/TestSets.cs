@@ -18,10 +18,10 @@
                 .WithNominalAttribute(name: "diary", values: new[] { "T", "F" })
                 .WithNominalAttribute(name: "soap", values: new[] { "T", "F" })
 
-                .AddData(new[] { "T", "T", "T", "T" })
-                .AddData(new[] { "T", "T", "T", "F" })
-                .AddData(new[] { "T", "F", "T", "F" })
-                .AddData(new[] { "T", "T", "F", "T" })
+                .AddInstance(new[] { "T", "T", "T", "T" })
+                .AddInstance(new[] { "T", "T", "T", "F" })
+                .AddInstance(new[] { "T", "F", "T", "F" })
+                .AddInstance(new[] { "T", "T", "F", "T" })
 
                 .Build();
         }
@@ -37,20 +37,20 @@
                 .WithNominalAttribute(name: "windy", values: new[] { "TRUE", "FALSE" })
                 .WithNominalAttribute(name: "play", values: new[] { "yes", "no" })
 
-                .AddData(new[] { "sunny", "hot", "high", "FALSE", "no" })
-                .AddData(new[] { "sunny", "hot", "high", "TRUE", "no" })
-                .AddData(new[] { "overcast", "hot", "high", "FALSE", "yes" })
-                .AddData(new[] { "rainy", "mild", "high", "FALSE", "yes" })
-                .AddData(new[] { "rainy", "cool", "normal", "FALSE", "yes" })
-                .AddData(new[] { "rainy", "cool", "normal", "TRUE", "no" })
-                .AddData(new[] { "overcast", "cool", "normal", "TRUE", "yes" })
-                .AddData(new[] { "sunny", "mild", "high", "FALSE", "no" })
-                .AddData(new[] { "sunny", "cool", "normal", "FALSE", "yes" })
-                .AddData(new[] { "rainy", "mild", "normal", "FALSE", "yes" })
-                .AddData(new[] { "sunny", "mild", "normal", "TRUE", "yes" })
-                .AddData(new[] { "overcast", "mild", "high", "TRUE", "yes" })
-                .AddData(new[] { "overcast", "hot", "normal", "FALSE", "yes" })
-                .AddData(new[] { "rainy", "mild", "high", "TRUE", "no" })
+                .AddInstance(new[] { "sunny", "hot", "high", "FALSE", "no" })
+                .AddInstance(new[] { "sunny", "hot", "high", "TRUE", "no" })
+                .AddInstance(new[] { "overcast", "hot", "high", "FALSE", "yes" })
+                .AddInstance(new[] { "rainy", "mild", "high", "FALSE", "yes" })
+                .AddInstance(new[] { "rainy", "cool", "normal", "FALSE", "yes" })
+                .AddInstance(new[] { "rainy", "cool", "normal", "TRUE", "no" })
+                .AddInstance(new[] { "overcast", "cool", "normal", "TRUE", "yes" })
+                .AddInstance(new[] { "sunny", "mild", "high", "FALSE", "no" })
+                .AddInstance(new[] { "sunny", "cool", "normal", "FALSE", "yes" })
+                .AddInstance(new[] { "rainy", "mild", "normal", "FALSE", "yes" })
+                .AddInstance(new[] { "sunny", "mild", "normal", "TRUE", "yes" })
+                .AddInstance(new[] { "overcast", "mild", "high", "TRUE", "yes" })
+                .AddInstance(new[] { "overcast", "hot", "normal", "FALSE", "yes" })
+                .AddInstance(new[] { "rainy", "mild", "high", "TRUE", "no" })
 
                 .Build();
         }

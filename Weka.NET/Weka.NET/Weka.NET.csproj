@@ -48,6 +48,9 @@
     <Compile Include="Associations\RuleBuilder.cs" />
     <Compile Include="Associations\ItemSet.cs" />
     <Compile Include="Associations\ItemSetBuilder.cs" />
+    <Compile Include="Clusterers\Cluster.cs" />
+    <Compile Include="Clusterers\Cobweb.cs" />
+    <Compile Include="Clusterers\IClusterer.cs" />
     <Compile Include="Core\DataSetBuilder.cs" />
     <Compile Include="Core\IDisplayable.cs" />
     <Compile Include="Core\Parsers\ArffParser.cs" />

@@ -43,7 +43,7 @@
             parser.ParseInstances(dataSetBuilder.Object, dataSetStream);
 
             //Then
-            dataSetBuilder.Verify(builder => builder.AddData(new string[] { "sunny","hot","high","FALSE","no" }));
+            dataSetBuilder.Verify(builder => builder.AddInstance(new string[] { "sunny","hot","high","FALSE","no" }));
         }
 
         [Test]

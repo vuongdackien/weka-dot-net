@@ -15,7 +15,7 @@
 
         IDataSetBuilder WithNominalAttribute(string name, string[] values);
 
-        IDataSetBuilder AddData(string[] values);
+        IDataSetBuilder AddInstance(string[] values);
 
         IDataSetBuilder WithStringAttribute(string name);
 
@@ -82,7 +82,7 @@
             return this;
         }
 
-        public IDataSetBuilder AddData(string[] values)
+        public IDataSetBuilder AddInstance(string[] values)
         {
             var encoded = new double?[values.Length];
 

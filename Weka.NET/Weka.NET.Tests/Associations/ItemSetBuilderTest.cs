@@ -46,9 +46,9 @@
                 .WithNominalAttribute
                     (name: "second_attribute", values: new[] { "second0", "second1" })
 
-                .AddData(new[] { "first0", "second0" })
-                .AddData(new[] { "first1", "second1" })
-                .AddData(new[] { "first0", "second0" })
+                .AddInstance(new[] { "first0", "second0" })
+                .AddInstance(new[] { "first1", "second1" })
+                .AddInstance(new[] { "first0", "second0" })
 
                 .Build();
 
@@ -73,9 +73,9 @@
                 .WithNominalAttribute
                     (name: "second_attribute", values: new[] { "second0", "second1" })
 
-                .AddData(new[] { "first0", "second0" })
-                .AddData(new[] { "first1", "second1" })
-                .AddData(new[] { "first0", "second0" })
+                .AddInstance(new[] { "first0", "second0" })
+                .AddInstance(new[] { "first1", "second1" })
+                .AddInstance(new[] { "first0", "second0" })
 
                 .Build();
 
@@ -102,9 +102,9 @@
                 .WithNominalAttribute
                     (name: "second_attribute", values: new[] { "second0", "second1" })
 
-                .AddData(new[] { "first0", "second0" })
-                .AddData(new[] { "first1", "second1" })
-                .AddData(new[] { "first0", "second0" })
+                .AddInstance(new[] { "first0", "second0" })
+                .AddInstance(new[] { "first1", "second1" })
+                .AddInstance(new[] { "first0", "second0" })
 
                 .Build();
 

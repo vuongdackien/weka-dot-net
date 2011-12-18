@@ -85,7 +85,7 @@
 
                 var trimmedInstanceValues = (from v in instanceValues select v.Trim()).ToArray();
 
-                dataSetBuilder.AddData(instanceValues);
+                dataSetBuilder.AddInstance(instanceValues);
 
                 reader.ReadLine();
             }
