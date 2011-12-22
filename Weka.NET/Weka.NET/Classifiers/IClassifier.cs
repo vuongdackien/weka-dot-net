@@ -4,6 +4,10 @@
     
     public interface IClassifier
     {
+        Core.Attribute ClassAttribute { get; }
+
+        int ClassAttributeIndex { get; }
+
         double ClassifyInstance(Instance instance);
     }
 }

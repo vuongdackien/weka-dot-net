@@ -124,7 +124,7 @@ namespace Weka.NET.Associations
                     buff.Append(" AND ");
                 }
 
-                buff.Append(attributes[i].Name).Append("=").Append(attributes[i].Decode(items[i]));
+                buff.Append(attributes[i].Name).Append("=").Append(attributes[i].Decode(items[i].Value));
 
                 first = false;
             }

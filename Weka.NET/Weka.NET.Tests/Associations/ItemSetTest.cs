@@ -16,7 +16,7 @@ namespace Weka.NET.Tests.Associations
         {
             var items = new ItemSet(1d, 2d);
 
-            var instance = new Instance(new List<double?>{1d, 2d});
+            var instance = new Instance(new List<double>{1d, 2d});
 
             Assert.IsTrue(items.ContainedBy(instance));
         }

@@ -7,19 +7,18 @@
     
     public class NumericAttribute : Weka.NET.Core.Attribute
     {
-        public NumericAttribute(string name, int index)
-            : base(name, index)
+        public NumericAttribute(string name) : base(name)
         {
         }
 
-        public override double? Encode(string value)
+        public override double Encode(string value)
         {
-            return Double.Parse(value) as double?;
+            return Double.Parse(value);
         }
 
-        public override string Decode(double? value)
+        public override string Decode(double value)
         {
-            return value.HasValue ? value.Value.ToString() : null;
+            return double.NaN.Equals(value) ? DecodedMissingAttribute : value.ToString();
         }
     }
 }

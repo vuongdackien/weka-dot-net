@@ -7,16 +7,16 @@
     
     public class StringAttribute : Weka.NET.Core.Attribute
     {
-        public StringAttribute(string name, int index) : base(name, index)
+        public StringAttribute(string name) : base(name)
         {
         }
 
-        public override double? Encode(string value)
+        public override double Encode(string value)
         {
             throw new NotImplementedException("Not implemented");
         }
 
-        public override string Decode(double? value)
+        public override string Decode(double value)
         {
             throw new NotImplementedException("Not implemented");
         }

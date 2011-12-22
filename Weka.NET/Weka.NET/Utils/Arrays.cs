@@ -4,10 +4,12 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using System.Runtime.CompilerServices;
     
-    public static class Arrays
+    [assembly:InternalsVisibleTo("Weka.NET.Tests")]
+    internal static class Arrays
     { 
-        public static bool ArrayEquals(double?[] left, double?[] right)
+        internal static bool ArrayEquals(double?[] left, double?[] right)
         {
             if (left.Length != right.Length)
             {
@@ -51,7 +53,7 @@
             return values;
         }
 
-        public static bool AreEquals(IList<double?> left, IList<double?> right)
+        internal static bool AreEquals(IList<double?> left, IList<double?> right)
         {
             if (left.Count != right.Count)
             {
@@ -118,7 +120,7 @@
             return hash;
         }
 
-        public static IList<double?> Merge(IList<double?> first, IList<double?> second)
+        internal static IList<double?> Merge(IList<double?> first, IList<double?> second)
         {
             double?[] result = new double?[first.Count];
 

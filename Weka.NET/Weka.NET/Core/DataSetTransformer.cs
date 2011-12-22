@@ -26,10 +26,7 @@
 
             while (enumerator.MoveNext())
             {
-                if (false == enumerator.Current[classIndex].HasValue)
-                {
 
-                }
             }
         }
 

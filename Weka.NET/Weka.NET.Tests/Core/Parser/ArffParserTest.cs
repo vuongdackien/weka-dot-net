@@ -33,7 +33,7 @@
                 "@relation weather.symbolic "+
                 "\n @attribute outlook {sunny, overcast, rainy}"
                 +"\n @data"
-                + "\n sunny,hot,high,FALSE,no");
+                + "\n sunny");
 
             var dataSetStream = new LineReader(new StreamReader(dataSetString));
 
@@ -43,7 +43,7 @@
             parser.ParseInstances(dataSetBuilder.Object, dataSetStream);
 
             //Then
-            dataSetBuilder.Verify(builder => builder.AddInstance(new string[] { "sunny","hot","high","FALSE","no" }));
+            dataSetBuilder.Verify(builder => builder.AddInstance(new string[] { "sunny" }));
         }
 
         [Test]
@@ -74,13 +74,15 @@
             dataSetBuilder.Verify(builder => builder.WithRelationName("somerelation"));
         }
 
-        private static MemoryStream GivenStringStream(string str)
+        #region private class / test steps
+
+        static MemoryStream GivenStringStream(string str)
         {
             byte[] byteArray = Encoding.ASCII.GetBytes(str);
             return new MemoryStream(byteArray);
         }
 
-        private class TesteableArffParser : ArffParser
+        class TesteableArffParser : ArffParser
         {
             public new void ParseRelationName(IDataSetBuilder builder, LineReader reader)
             {
@@ -92,5 +94,7 @@
                 base.ParseAttributes(builder, reader);
             }
         }
+
+        #endregion
     }
 }

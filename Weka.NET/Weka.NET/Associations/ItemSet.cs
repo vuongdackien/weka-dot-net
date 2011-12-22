@@ -119,12 +119,7 @@
             {
                 if (values[i].HasValue)
                 {
-                    if (false == instance[i].HasValue)
-                    {
-                        return false;
-                    }
-
-                    if (values[i] != instance[i])
+                    if (false == values[i].Equals(instance[i]))
                     {
                         return false;
                     }
@@ -163,7 +158,7 @@
         {
             unchecked
             {
-                return Arrays.GetHashCodeForArray(values);
+                return Weka.NET.Utils.Arrays.GetHashCodeForArray(values);
             }
         }
 

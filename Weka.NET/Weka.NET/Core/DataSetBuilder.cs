@@ -51,14 +51,14 @@
 
         public IDataSetBuilder WithStringAttribute(string name)
         {
-            attributes.Add(new StringAttribute(name: name, index: attributes.Count));
+            attributes.Add(new StringAttribute(name: name));
 
             return this;
         }
 
         public IDataSetBuilder WithNumericAttribute(string name)
         {
-            attributes.Add(new NumericAttribute(name: name, index:attributes.Count));
+            attributes.Add(new NumericAttribute(name: name));
 
             return this;
         }
@@ -77,14 +77,14 @@
 
             var trimmedValues = (from v in values select v.Trim()).ToArray();
 
-            attributes.Add( new NominalAttribute(name.Trim(), attributes.Count, trimmedValues) );
+            attributes.Add( new NominalAttribute(name.Trim(), trimmedValues) );
 
             return this;
         }
 
         public IDataSetBuilder AddInstance(string[] values)
         {
-            var encoded = new double?[values.Length];
+            var encoded = new double[values.Length];
 
             for(int i=0;i<values.Length;i++)
             {

@@ -48,12 +48,21 @@
     <Compile Include="Associations\RuleBuilder.cs" />
     <Compile Include="Associations\ItemSet.cs" />
     <Compile Include="Associations\ItemSetBuilder.cs" />
+    <Compile Include="AttributeSelection\IAttributeEvaluator.cs" />
+    <Compile Include="Classifiers\ClassificationException.cs" />
+    <Compile Include="Classifiers\DistributionClassifier.cs" />
+    <Compile Include="Classifiers\IClassifierBuilder.cs" />
+    <Compile Include="Classifiers\ZeroR.cs" />
     <Compile Include="Clusterers\Cluster.cs" />
     <Compile Include="Clusterers\Cobweb.cs" />
     <Compile Include="Clusterers\IClusterer.cs" />
     <Compile Include="Core\DataSetBuilder.cs" />
+    <Compile Include="Lang\Arrays.cs" />
+    <Compile Include="Lang\DeepCopy.cs" />
     <Compile Include="Core\IDisplayable.cs" />
+    <Compile Include="Core\ISummarizable.cs" />
     <Compile Include="Core\Parsers\ArffParser.cs" />
+    <Compile Include="Lang\Range.cs" />
     <Compile Include="Lang\DoubleExt.cs" />
     <Compile Include="Lang\ImmutableAttribute.cs" />
     <Compile Include="Lang\NonThreadSafe.cs" />
@@ -79,7 +88,9 @@
     <Compile Include="Utils\Collections.cs" />
     <Compile Include="Utils\TestSets.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Core\Matrix\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
