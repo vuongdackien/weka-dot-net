@@ -15,13 +15,16 @@
 
         IDataSetBuilder WithNominalAttribute(string name, string[] values);
 
-        IDataSetBuilder AddInstance(string[] values);
+        IDataSetBuilder AddInstance(params string[] values);
 
         IDataSetBuilder WithStringAttribute(string name);
+
+        IDataSetBuilder AddWeightedInstance(double weight, params string[] values);
 
         StreamReader BuildAsStreamReader();
 
         DataSet Build();
+
     }
 
     public class DataSetBuilder : IDataSetBuilder
@@ -49,6 +52,15 @@
             return this;
         }
 
+        public IDataSetBuilder AddWeightedInstance(double weight, params string[] values)
+        {
+            var instance = CreateInstance(weight, values);
+
+            instances.Add(instance);
+
+            return this;
+        }
+        
         public IDataSetBuilder WithStringAttribute(string name)
         {
             attributes.Add(new StringAttribute(name: name));
@@ -82,7 +94,17 @@
             return this;
         }
 
-        public IDataSetBuilder AddInstance(string[] values)
+        public IDataSetBuilder AddInstance(params string[] values)
+        {
+            var instance = CreateInstance(Instance.DefaultWeight, values);
+
+            instances.Add(instance);
+
+            return this;
+
+        }
+
+        Instance CreateInstance(double weight, params string[] values)
         {
             var encoded = new double[values.Length];
 
@@ -91,9 +113,9 @@
                 encoded[i] = attributes[i].Encode(values[i]);               
             }
 
-            instances.Add(new Instance(encoded));
+            var instance = new Instance(weight, encoded);
 
-            return this;
+            return instance;
         }
 
         public DataSet Build()

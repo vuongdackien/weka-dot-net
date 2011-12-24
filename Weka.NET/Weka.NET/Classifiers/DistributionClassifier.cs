@@ -17,7 +17,7 @@
 
         public abstract double[] DistributionForInstance(Instance instance);
 
-        public double ClassifyInstance(Instance instance)
+        public virtual double ClassifyInstance(Instance instance)
         {
             double[] distributions = DistributionForInstance(instance);
 
