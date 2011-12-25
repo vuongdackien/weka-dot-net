@@ -50,6 +50,7 @@
     <Compile Include="Associations\ItemSetBuilder.cs" />
     <Compile Include="AttributeSelection\IAttributeEvaluator.cs" />
     <Compile Include="Classifiers\ClassificationException.cs" />
+    <Compile Include="Classifiers\ClassifierEvaluator.cs" />
     <Compile Include="Classifiers\DistributionClassifier.cs" />
     <Compile Include="Classifiers\IClassifierBuilder.cs" />
     <Compile Include="Classifiers\ZeroR.cs" />
@@ -72,7 +73,6 @@
     <Compile Include="Text\StopWordsList.cs" />
     <Compile Include="Filters\Unsupervised\Attribute\StringToVector.cs" />
     <Compile Include="Utils\OptionArgumentAttribute.cs" />
-    <Compile Include="Utils\Arrays.cs" />
     <Compile Include="Classifiers\IClassifier.cs" />
     <Compile Include="Core\Attribute.cs" />
     <Compile Include="Core\DataSet.cs" />

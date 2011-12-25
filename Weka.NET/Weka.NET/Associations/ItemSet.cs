@@ -158,7 +158,7 @@
         {
             unchecked
             {
-                return Weka.NET.Utils.Arrays.GetHashCodeForArray(values);
+                return values.GetHashCodeForArray();
             }
         }
 

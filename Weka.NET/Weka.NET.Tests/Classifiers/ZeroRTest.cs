@@ -58,6 +58,26 @@
         {
             //Given
             var dataSet = DataSetBuilder.AnyDataSet()
+                .WithNumericAttribute(name: "numeric_attribute")
+                .AddInstance(new[] { "1.1" })
+                .AddInstance(new[] { "1.1" })
+                .AddWeightedInstance(weight: 7, values: new[] { "8.7" })
+                    .Build();
+
+            var zeroR = new ZeroRBuilder().BuildClassifier(trainingData: dataSet, classAttributeIndex: 0);
+
+            //When
+            var predicted = zeroR.ClassifyInstance(new Instance(values: new List<double> { 1d }));
+
+            //Then
+            Assert.AreEqual(7.0111111111111102d, predicted);
+        }
+
+        [Test]
+        public void ZeroRClassifyNominalAttributeByCalculatingTheWeightedClassValue()
+        {
+            //Given
+            var dataSet = DataSetBuilder.AnyDataSet()
                 .WithNominalAttribute
                     (name: "nominal_attribute", values: new[] { "first0", "first1", "first2" })
 
@@ -74,11 +94,6 @@
 
             //Then
             Assert.AreEqual(2d, predicted);
-        }
-
-        [Test]
-        public void ZeroRClassifyNominalAttributeByFindingTheAttributeValueWithMoreOccurrences()
-        {
         }
 
 
