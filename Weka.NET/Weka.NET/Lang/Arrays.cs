@@ -196,6 +196,23 @@ namespace Weka.NET.Lang
             return hash;
         }
 
+        internal static int GetHashCodeForArray<T>(this IList<T> array)
+        {
+            int hash = 13;
+
+            for (int i = 0; i < array.Count; i++)
+            {
+                if (array[i] == null)
+                {
+                    continue;
+                }
+
+                hash ^= array[i].GetHashCode();
+            }
+
+            return hash;
+        }
+
         internal static IList<double?> Merge(IList<double?> first, IList<double?> second)
         {
             double?[] result = new double?[first.Count];

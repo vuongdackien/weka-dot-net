@@ -23,6 +23,8 @@
 
         StreamReader BuildAsStreamReader();
 
+        IList<IDataSet> SplitDataSet(IDataSet dataSet, int attributeIndex);
+
         DataSet Build();
 
     }
@@ -128,6 +130,114 @@
             throw new NotImplementedException();
         }
 
+        public IDataSet Duplicate(IDataSet trainingData)
+        {
+            var builder = AnyDataSet();
 
+            builder.WithRelationName(trainingData.RelationName);
+
+            foreach (var attribute in trainingData.Attributes)
+            {
+                builder.WithAttribute(attribute);
+            }
+
+            foreach (var instance in trainingData.Instances)
+            {
+                builder.AddInstance(instance);
+            }
+
+            return builder.Build();
+        }
+
+        public void AddInstance(Instance instance)
+        {
+            instances.Add(instance);
+        }
+
+        public void WithAttribute(Attribute attribute)
+        {
+            attributes.Add(attribute);
+        }
+
+        public IList<IDataSet> SplitDataSet(IDataSet dataSet, int attributeIndex)
+        {
+            if (false == dataSet.Attributes[attributeIndex] is NominalAttribute)
+            {
+                throw new ArgumentException("Can only split dataset by nominal attribute");
+            }
+
+            var attributeToSplit = dataSet.Attributes[attributeIndex] as NominalAttribute;
+
+            var builders = new DataSetBuilder[attributeToSplit.Values.Length];
+
+            for(int i=0;i<builders.Length;i++)
+            {
+                builders[i] = new DataSetBuilder();
+
+                builders[i].WithRelationName(dataSet.RelationName);
+
+                builders[i].WitAttributes(dataSet.Attributes);
+            }
+
+            foreach (var instance in dataSet.Instances)
+            {
+                builders[ (int) instance[attributeIndex] ].AddInstance(instance);
+            }
+
+            var dataSets = new List<IDataSet>();
+
+            foreach (var builder in builders)
+            {
+                var splitted = builder.Build();
+
+                dataSets.Add(splitted);
+            }
+
+            return dataSets;
+        }
+
+        public void WitAttributes(IList<Attribute> attributes)
+        {
+            foreach (var attribute in attributes)
+            {
+                WithAttribute(attribute);
+            }
+        }
+
+        public static bool EqualsAttributes(IDataSet first, IDataSet second)
+        {
+            if (first.Attributes.Count != second.Attributes.Count)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < first.Attributes.Count; i++)
+            {
+                if (false == first.Attributes[i].Equals(second.Attributes[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public static bool EqualsInstances(IDataSet first, IDataSet second)
+        {
+            if (first.Instances.Count != second.Instances.Count)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < first.Instances.Count; i++)
+            {
+                if (false == first.Instances[i].Equals(second.Instances[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
     }
 }

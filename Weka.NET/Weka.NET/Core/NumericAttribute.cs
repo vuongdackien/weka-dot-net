@@ -13,6 +13,11 @@
 
         public override double Encode(string value)
         {
+            if ("?".Equals(value))
+            {
+                return double.NaN;
+            }
+
             return Double.Parse(value);
         }
 

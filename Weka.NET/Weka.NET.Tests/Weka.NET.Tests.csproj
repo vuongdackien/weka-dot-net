@@ -54,11 +54,15 @@
     <Compile Include="Associations\ItemSetBuilderTest.cs" />
     <Compile Include="Associations\ItemSetTest.cs" />
     <Compile Include="Associations\RuleBuilderTest.cs" />
+    <Compile Include="Classifiers\DecisionTrees\EntropyCalculatorTest.cs" />
+    <Compile Include="Classifiers\DecisionTrees\Id3Test.cs" />
     <Compile Include="Classifiers\ZeroRTest.cs" />
+    <Compile Include="Core\DataSetBuilderTest.cs" />
     <Compile Include="Core\NominalAttributeTest.cs" />
     <Compile Include="Core\Parser\ArffParserTest.cs" />
     <Compile Include="Lang\ArraysTest.cs" />
     <Compile Include="Lang\DoubleExtTest.cs" />
+    <Compile Include="Lang\StatsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Filters\Unsupervised\Attribute\StringToVectorTest.cs" />
     <Compile Include="Text\NullStemmerTest.cs" />

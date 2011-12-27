@@ -34,7 +34,7 @@
 
         internal DataSet Build()
         {
-            return new DataSet(name:originalSet.Name, attributes:originalSet.Attributes, instances: instances);
+            return new DataSet(name:originalSet.RelationName, attributes:originalSet.Attributes, instances: instances);
         }
     }
 }

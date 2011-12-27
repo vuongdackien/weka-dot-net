@@ -7,18 +7,22 @@
     
     public interface IDataSet
     {
-        string Name { get; }
+        string RelationName { get; }
 
         IList<Attribute> Attributes { get; }
 
         IList<Instance> Instances { get; }
 
         int Count { get; }
+
+        bool ContainsNominalAttributesOnly();
+
+        bool ContainsMissingValues();
     }
 
     public class DataSet : IDataSet
     {
-        public string Name { get; private set; }
+        public string RelationName { get; private set; }
 
         public IList<Attribute> Attributes { get; private set; }
 
@@ -26,7 +30,7 @@
 
         public DataSet(string name, IEnumerable<Attribute> attributes, IEnumerable<Instance> instances)
         {
-            Name = name;
+            RelationName = name;
 
             if (attributes.Count() == 0)
             {
@@ -42,7 +46,7 @@
         public override string ToString()
         {
             var buff = new StringBuilder();
-            buff.Append("DataSet[Name=").Append(Name);
+            buff.Append("DataSet[Name=").Append(RelationName);
             buff.Append(", attributes=").Append(Attributes.Count);
 
             return buff.ToString();
@@ -72,11 +76,27 @@
             return false;
         }
 
-
+        public bool ContainsNominalAttributesOnly()
+        {
+            return Attributes.All(attribute => attribute is NominalAttribute);
+        }
 
         public bool ContainsStringAttribute()
         {
             return Attributes.Any(a => a is StringAttribute);
+        }
+
+        public bool ContainsMissingValues()
+        {
+            foreach (var instance in Instances)
+            {
+                if (instance.ContainsMissingValue())
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

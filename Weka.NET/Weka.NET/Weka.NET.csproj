@@ -51,6 +51,8 @@
     <Compile Include="AttributeSelection\IAttributeEvaluator.cs" />
     <Compile Include="Classifiers\ClassificationException.cs" />
     <Compile Include="Classifiers\ClassifierEvaluator.cs" />
+    <Compile Include="Classifiers\DecisionTrees\EntropyCalculator.cs" />
+    <Compile Include="Classifiers\DecisionTrees\Id3.cs" />
     <Compile Include="Classifiers\DistributionClassifier.cs" />
     <Compile Include="Classifiers\IClassifierBuilder.cs" />
     <Compile Include="Classifiers\ZeroR.cs" />
@@ -58,11 +60,13 @@
     <Compile Include="Clusterers\Cobweb.cs" />
     <Compile Include="Clusterers\IClusterer.cs" />
     <Compile Include="Core\DataSetBuilder.cs" />
+    <Compile Include="Estimators\IEstimator.cs" />
     <Compile Include="Lang\Arrays.cs" />
     <Compile Include="Lang\DeepCopy.cs" />
     <Compile Include="Core\IDisplayable.cs" />
     <Compile Include="Core\ISummarizable.cs" />
     <Compile Include="Core\Parsers\ArffParser.cs" />
+    <Compile Include="Lang\Stats.cs" />
     <Compile Include="Lang\Range.cs" />
     <Compile Include="Lang\DoubleExt.cs" />
     <Compile Include="Lang\ImmutableAttribute.cs" />
