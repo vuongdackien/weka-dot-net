@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using Weka.NET.Core;
     using Weka.NET.Lang;
-    
+
     /// <summary>
     /// Class implementing an Id3 decision tree classifier.
     /// 
@@ -23,17 +23,17 @@
                 throw new ClassificationException("Id3 only accept Nominal attributes");
             }
 
-            if (trainingData.ContainsMissingValues())
+            if (trainingData.ContainsMissingValuesForAttribute(classAttributeIndex)) //only class attribute can't contain missing
             {
                 throw new ClassificationException("Id3 only accept Nominal attributes");
             }
 
-            var duplicatedTrainingData = new DataSetBuilder().Duplicate(trainingData);
+            var duplicatedTrainingData = new DataSetBuilder().DuplicateRemovingMissing(trainingData); //duplicate by removing missing
 
-            return MakeTree(duplicatedTrainingData, classAttributeIndex);
+            return MakeTree(duplicatedTrainingData, classAttributeIndex, new List<Id3>());
         }
 
-        Id3 MakeTree(IDataSet trainingData, int classAttributeIndex)
+        Id3 MakeTree(IDataSet trainingData, int classAttributeIndex, IList<Id3> successors)
         {
             var classAttribute = trainingData.Attributes[classAttributeIndex] as NominalAttribute;
 
@@ -42,8 +42,8 @@
             {
                 return new Id3(classAttribute
                     , classAttributeIndex
+                    , Instance.MissingValue
                     , new double[classAttribute.Values.Length]
-                    , new List<Id3>()
                     );
             }
 
@@ -55,7 +55,7 @@
                 infoGains[i] = EntropyCalculator.CalculateInfoGain(trainingData, i);
             }
 
-            int maxInfoGainAttributeIdx = Arrays.MaxIndex(infoGains);
+            int maxInfoGainAttributeIdx = infoGains.MaxIndex();
 
             var maxInfoGainAttribute = trainingData.Attributes[maxInfoGainAttributeIdx] as NominalAttribute;
 
@@ -75,19 +75,20 @@
                 var normalizedDistribution = Arrays.Normalize(distribution);
 
                 int classValueIndex = Arrays.MaxIndex(normalizedDistribution);
+
+                return new Id3(
+                    classAttribute
+                    , classAttributeIndex
+                    , normalizedDistribution[normalizedDistribution.MaxIndex()]
+                    , normalizedDistribution);
             }
             else
             {
                 var splitData = new DataSetBuilder().SplitDataSet(trainingData, maxInfoGainAttributeIdx);
 
-                var successors = new Id3[maxInfoGainAttribute.Values.Length];
-                
                 for (int j = 0; j < maxInfoGainAttribute.Values.Length; j++)
                 {
-                    //successors[j] = new Id3();
 
-                    //successors[j].buildClassifier(splitData[j]);
-                    //MakeTree
                 }
             }
 
@@ -118,24 +119,22 @@
         public double ClassValue {get; private set;}
 
         public Id3(Core.Attribute classAttribute
-                    , int classAttributeIndex
-                    , double[] distribution
-                    , IList<Id3> successors)
-
+            , int classAttributeIndex
+            , double classValue
+            , double[] distribution)
             : base(classAttribute, classAttributeIndex)
         {
+            ClassValue = classValue;
             Distribution = distribution;
-            Successors = successors;
         }
 
         public Id3(Core.Attribute classAttribute
-                    , int classAttributeIndex
-                    , NominalAttribute splitAttribute
-                    )
-
+            , int classAttributeIndex
+            , double classValue
+            , IList<Id3> successors)
             : base(classAttribute, classAttributeIndex)
         {
-            SplitAttribute = splitAttribute;
+            Successors = new List<Id3>(successors);
         }
 
         public override double ClassifyInstance(Instance instance)

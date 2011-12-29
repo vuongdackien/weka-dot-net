@@ -8,7 +8,7 @@
     public class DataSetBuilderTest
     {
         [Test]
-        public void CanDuplicateDataSet()
+        public void InstanceMissingDataWontGetDuplicatedWhenDuplicatingDataSets()
         {
             //Given
             var dataSet = DataSetBuilder.AnyDataSet()
@@ -19,27 +19,26 @@
                     (name: "numeric_attribute")
                 .AddInstance(values: new[] { "some_value", "?" })
                 .AddInstance(values: new[] { "?", "1" })
+                .AddInstance(values: new[] { "some_value", "1" })
+
                     .Build();
 
             //When
-            var duplicated = new DataSetBuilder().Duplicate(dataSet);
+            var duplicated = new DataSetBuilder().DuplicateRemovingMissing(dataSet);
 
             //Then
             Assert.AreEqual("some_name", duplicated.RelationName);
 
-            Assert.IsTrue(dataSet.Attributes.Count > 0);
+            Assert.AreEqual(dataSet.Attributes.Count, duplicated.Attributes.Count);
 
             for (int attributeIdx = 0; attributeIdx < dataSet.Attributes.Count; attributeIdx++)
             {
                 Assert.AreEqual(dataSet.Attributes[attributeIdx], duplicated.Attributes[attributeIdx]);
             }
 
-            Assert.IsTrue(dataSet.Instances.Count > 0);
+            Assert.AreEqual(1, duplicated.Instances.Count);
 
-            for (int instanceIdx = 0; instanceIdx < dataSet.Instances.Count; instanceIdx++)
-            {
-                Assert.AreEqual(dataSet.Instances[instanceIdx], duplicated.Instances[instanceIdx]);
-            }
+            Assert.AreEqual(dataSet.Instances[2], duplicated.Instances[0]);
         }
 
         [Test]

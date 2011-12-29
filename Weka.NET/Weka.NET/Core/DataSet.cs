@@ -18,6 +18,8 @@
         bool ContainsNominalAttributesOnly();
 
         bool ContainsMissingValues();
+
+        bool ContainsMissingValuesForAttribute(int classAttributeIndex);
     }
 
     public class DataSet : IDataSet
@@ -91,6 +93,19 @@
             foreach (var instance in Instances)
             {
                 if (instance.ContainsMissingValue())
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool ContainsMissingValuesForAttribute(int attributeIndex)
+        {
+            foreach (var instance in Instances)
+            {
+                if (instance.IsMissing(attributeIndex))
                 {
                     return true;
                 }

@@ -14,6 +14,17 @@
             return (b - a < SMALL);
         }
 
+        /**
+ * Round a data value using the defined precision for this estimator
+ *
+ * @param data the value to round
+ * @return the rounded data value
+ */
+        public static double round(double data, int precision)
+        {
+
+            return Math.Round(data, precision);
+        }
 
     }
 }

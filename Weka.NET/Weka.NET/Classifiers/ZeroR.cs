@@ -2,7 +2,9 @@
 {
     using Weka.NET.Core;
     using Weka.NET.Lang;
+    using Weka.NET.Utils;
 
+    [OptionArgument('t', "Set the training data")]
     public class ZeroRBuilder : IClassifierBuilder<ZeroR>
     {
         public ZeroR BuildClassifier(IDataSet trainingData, int classAttributeIndex)

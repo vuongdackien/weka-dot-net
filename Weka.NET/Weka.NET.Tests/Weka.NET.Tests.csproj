@@ -58,8 +58,12 @@
     <Compile Include="Classifiers\DecisionTrees\Id3Test.cs" />
     <Compile Include="Classifiers\ZeroRTest.cs" />
     <Compile Include="Core\DataSetBuilderTest.cs" />
+    <Compile Include="Core\DataSetTest.cs" />
     <Compile Include="Core\NominalAttributeTest.cs" />
     <Compile Include="Core\Parser\ArffParserTest.cs" />
+    <Compile Include="Estimators\DiscreteEstimatorTest.cs" />
+    <Compile Include="Estimators\NormalEstimatorTest.cs" />
+    <Compile Include="Estimators\PoissonEstimatorTest.cs" />
     <Compile Include="Lang\ArraysTest.cs" />
     <Compile Include="Lang\DoubleExtTest.cs" />
     <Compile Include="Lang\StatsTest.cs" />

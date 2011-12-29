@@ -130,7 +130,7 @@
             throw new NotImplementedException();
         }
 
-        public IDataSet Duplicate(IDataSet trainingData)
+        public IDataSet DuplicateRemovingMissing(IDataSet trainingData)
         {
             var builder = AnyDataSet();
 
@@ -143,6 +143,11 @@
 
             foreach (var instance in trainingData.Instances)
             {
+                if (instance.ContainsMissingValue())
+                {
+                    continue;
+                }
+
                 builder.AddInstance(instance);
             }
 

@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Weka.NET.Utils
 {
+
     public class OptionArgumentAttribute : Attribute
     {
         public char OptionArgument { get; set; }
