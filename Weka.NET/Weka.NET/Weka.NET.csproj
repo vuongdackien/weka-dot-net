@@ -66,8 +66,11 @@
     <Compile Include="Core\Statistics.cs" />
     <Compile Include="Estimators\DiscreteEstimator.cs" />
     <Compile Include="Estimators\IEstimator.cs" />
+    <Compile Include="Estimators\KernelEstimator.cs" />
     <Compile Include="Estimators\NormalEstimator.cs" />
     <Compile Include="Estimators\PoissonEstimator.cs" />
+    <Compile Include="Filters\DiscretizeFilter.cs" />
+    <Compile Include="Filters\IFilter.cs" />
     <Compile Include="Lang\Arrays.cs" />
     <Compile Include="Lang\DeepCopy.cs" />
     <Compile Include="Core\IDisplayable.cs" />
